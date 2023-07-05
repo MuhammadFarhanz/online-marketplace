@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AuthShowcase from "../sign-in/sign-in";
+import AuthShowcase from "./sign-in/sign-in";
 import { useSession } from "next-auth/react";
  
 export default function Navbar() {

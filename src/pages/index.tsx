@@ -1,8 +1,8 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+// import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
-import { api } from "~/utils/api";
-import  Navbar  from "./components/navbar";
+// import Link from "next/link";
+// import { api } from "~/utils/api";
+import  Navbar  from "./Navbar";
 
 export default function Home() {
 
