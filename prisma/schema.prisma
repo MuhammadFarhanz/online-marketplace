@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
 }
 
@@ -64,4 +64,25 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Product {
+    id          String    @id @default(cuid())
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    name        String
+    price       Int
+    description String
+    userId      String
+    message     Message[]
+}
+
+model Message {
+    id           String   @id @default(cuid())
+    fromUser     String
+    fromUserName String
+    // toUser       String
+    productId    String?
+    message      String
+    Product      Product? @relation(fields: [productId], references: [id])
 }
