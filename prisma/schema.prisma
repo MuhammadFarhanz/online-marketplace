@@ -73,7 +73,7 @@ model Product {
     name        String
     price       Int
     description String
-    userId      String
+    authorId    String
     message     Message[]
 }
 

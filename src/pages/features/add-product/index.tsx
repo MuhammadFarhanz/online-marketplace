@@ -3,7 +3,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useFormik } from 'formik'
 import { useRouter } from "next/router";
-import Navbar from "../components/Navbar";
+import Navbar from "~/pages/components/Navbar";
+
 
 interface FormValues {
   name: string,
@@ -12,7 +13,7 @@ interface FormValues {
 }
 
 const AddProduct: NextPage = () => {
-  const createProduct = api.product.createProduct.useMutation()
+  const createProduct = api.product.create.useMutation();
   const router = useRouter()
 
   const formik = useFormik<FormValues>({

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import AuthShowcase from "../features/sign-in";
 import { useSession } from "next-auth/react";
+import AuthShowcase from "../features/sign-in";
  
 export default function Navbar() {
     const { data: sessionData } = useSession();
-    console.log(sessionData)
+    // console.log(sessionData)
 
   return (
     <nav className="border-gray-200 bg-white dark:bg-gray-900">
@@ -134,18 +134,19 @@ export default function Navbar() {
               }
               { sessionData &&   
               <li>
-                <a
+                <Link
                   href="/features/add-product"
+                  as={'/add-product'}
                   className="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
                 >
                   add product
-                </a>
+                </Link>
               </li>}
            
            
          
               <li>
-               <AuthShowcase />
+               <AuthShowcase/>
               </li>
 
     

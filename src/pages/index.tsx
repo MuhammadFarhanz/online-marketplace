@@ -3,9 +3,13 @@ import Head from "next/head";
 // import Link from "next/link";
 // import { api } from "~/utils/api";
 import  Navbar  from "./components/Navbar";
+import { api } from "~/utils/api";
+import ProductCard from "./components/productCard";
 
 export default function Home() {
+  const products = api.product.getAll.useQuery()
 
+  console.log(products.data)
   return (
     <>
       <Head>
@@ -16,7 +20,11 @@ export default function Home() {
 
       <Navbar/>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-       
+      <div className="container grid grid-cols-4 gap-12 text-2xl text-white">
+          {products?.data?.map((product) => (
+            <ProductCard key={product.id} product={product}/>
+          ))}
+        </div>
       </main>
     </>
   );

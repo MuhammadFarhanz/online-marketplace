@@ -2,28 +2,31 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 export const productRouter = createTRPCRouter({
-  getAllProduct: publicProcedure.query(({ctx}) => {
+  getAll: publicProcedure.query(({ctx}) => {
     return ctx.prisma.product.findMany();
   }),
   getProductById: protectedProcedure
-    .input(z.object({ listingId: z.string()}))
+    .input(z.object({ productId: z.string()}))
     .query(({ctx, input}) => {
       return ctx.prisma.product.findUnique({
         where:{
-          id: input.listingId
+          id: input.productId
         }
       })
     })
   ,
-  createProduct: protectedProcedure
+  create: protectedProcedure
   .input(z.object({ name: z.string(), description: z.string(), price: z.number()}))
   .mutation( async ({input, ctx}) => {
-    const listing = await ctx.prisma.product.create({
+    console.log(input,ctx.session.user)
+    const product = await ctx.prisma.product.create({
      data: {
-        ...input,
-        userId : ctx.session.user.id
+       name: input.name,
+       price: input.price,
+       description: input.description,
+       authorId: ctx.session.user.id
      }
     })   
-    return listing; 
+    return product; 
   })
 });
