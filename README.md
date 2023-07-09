@@ -26,3 +26,29 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+# When adding additional environment variables, the schema in "/src/env.mjs"
+
+# should be updated accordingly.
+
+# Prisma
+
+# https://www.prisma.io/docs/reference/database-reference/connection-urls#env
+
+DATABASE_URL="file:./db.sqlite"
+
+# Next Auth
+
+# You can generate a new secret on the command line with:
+
+# openssl rand -base64 32
+
+# https://next-auth.js.org/configuration/options#secret
+
+NEXTAUTH_SECRET="qk1gkmFZ0VNUeFEjQuCggUEU469uqznLgANhwH7NauI="
+NEXTAUTH_URL="http://localhost:3000"
+
+# Next Auth Google Provider
+
+GOOGLE_CLIENT_ID="689422055272-5ppn27fhhj6rjffm8ct4a91v8qrn4qo6.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="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"
