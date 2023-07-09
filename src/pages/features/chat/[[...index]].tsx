@@ -10,32 +10,30 @@ import { api } from "~/utils/api";
 
 const Chat: NextPage = () => {
   const createMessage = api.message.sendMessage.useMutation()
-  const listing = useGetProductById()
-  const listingData = listing?.data
-
-//   console.log(listingData?.userId)
+  const product = useGetProductById()
+  const productData = product?.data
   interface Message {
     message: string,
   }
+
   const formik = useFormik<Message>({
     initialValues: {
       message: '',
     },
     onSubmit: async (values: Message,{ resetForm }) => {
-      if (listingData?.id) {
+      if (productData?.authorId) {
         await createMessage.mutateAsync({
           message: values.message,
-          listingId: listingData.id,
-          // toUser: listingData.userId,
+          productId: productData.id,
+          toUser: productData.authorId,
         });
       } else {
         await createMessage.mutateAsync({
           message: values.message,
-          listingId: '',
-          // toUser: '',
+          productId: '',
+          toUser: '',
         });
-        console.log('listingItem.id does not exist');
-        // Handle the case when listingItem.id does not exist
+        console.log('id does not exist');
       }
       resetForm()
     },
@@ -45,7 +43,7 @@ const Chat: NextPage = () => {
     return (
      <>
       <div className="bg-blue-400">
-        <p>{listingData?.name}</p>
+        <p>{productData?.name}</p>
 
       </div>
      </>
@@ -64,7 +62,7 @@ const Chat: NextPage = () => {
       <div className="bg-blue-400 flex h-[80vh] ">
         <div className="bg-red-300 w-1/3"></div>
         <div className="bg-green-300 w-full relative">select user to start a chat
-          {listingData && <Card/>}
+          {productData && <Card/>}
             <form onSubmit={formik.handleSubmit}
           className="bg-transparent shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
             <div className="flex">

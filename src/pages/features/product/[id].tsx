@@ -26,7 +26,9 @@ const ProductView: NextPage = () => {
          <p>{productItem?.description}</p>
          <p>Rp.{productItem?.price}</p>
          
-         <Link href={`/chat/${productItem?.id}`}
+         <Link 
+         href={`/features/chat/${productItem?.id}`}
+
           >
          <button className="bg-blue-400">
             chat
