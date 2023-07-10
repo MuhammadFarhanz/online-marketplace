@@ -11,7 +11,7 @@ import { api } from "~/utils/api";
 const Chat: NextPage = () => {
   const createMessage = api.message.sendMessage.useMutation()
   const product = useGetProductById()
-  const productData = product?.data
+  // const product = product?.data
   interface Message {
     message: string,
   }
@@ -21,11 +21,11 @@ const Chat: NextPage = () => {
       message: '',
     },
     onSubmit: async (values: Message,{ resetForm }) => {
-      if (productData?.authorId) {
+      if (product?.authorId) {
         await createMessage.mutateAsync({
           message: values.message,
-          productId: productData.id,
-          toUser: productData.authorId,
+          productId: product.id,
+          toUser: product.authorId,
         });
       } else {
         await createMessage.mutateAsync({
@@ -43,7 +43,7 @@ const Chat: NextPage = () => {
     return (
      <>
       <div className="bg-blue-400">
-        <p>{productData?.name}</p>
+        <p>{product?.name}</p>
 
       </div>
      </>
@@ -62,15 +62,10 @@ const Chat: NextPage = () => {
       <div className="bg-blue-400 flex h-[80vh] ">
         <div className="bg-red-300 w-1/3"></div>
         <div className="bg-green-300 w-full relative">select user to start a chat
-          {productData && <Card/>}
+          {product && <Card/>}
             <form onSubmit={formik.handleSubmit}
           className="bg-transparent shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
             <div className="flex">
-              {/* <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="message"
-              >
-              </label> */}
               <input
                 className="shadow appearance-none border rounded-full w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="message"

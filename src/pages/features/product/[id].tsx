@@ -6,10 +6,9 @@ import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
 
 const ProductView: NextPage = () => {
-    const product = useGetProductById();
-    const productItem = product?.data;
-
-    console.log(productItem?.name)
+  const product = useGetProductById();
+ 
+  console.log(product)
 
   return (
     <>
@@ -21,14 +20,13 @@ const ProductView: NextPage = () => {
       <main className="container mx-auto flex min-h-screen flex-col ">
         <h1 className="text-4xl text-white m-4 ml-0">Items for sale</h1>
         <p className="container grid grid-cols-4 gap-12 text-2xl ">
-         {productItem?.name}
+         {product?.name}
          </p>
-         <p>{productItem?.description}</p>
-         <p>Rp.{productItem?.price}</p>
+         <p>{product?.description}</p>
+         <p>Rp.{product?.price}</p>
          
          <Link 
-         href={`/features/chat/${productItem?.id}`}
-
+         href={`/features/chat/${product?.id}`}
           >
          <button className="bg-blue-400">
             chat

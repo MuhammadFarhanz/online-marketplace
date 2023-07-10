@@ -6,17 +6,16 @@ export const useGetProductById = () => {
   const { id } = router.query
   const { index } = router.query
 
-  console.log(router.query)
-
-  const product = api.product.getProductById.useQuery(
+  const { data , error} = api.product.getProductById.useQuery(
     {
       productId: index?.[0] ? index[0] as string : id as string,
     },
     {
       enabled: !!index?.[0] || !!id,
-    }
+    },
   );
+  // console.log(error,'ini error')
   
-  return product
+  return data
 
 };
