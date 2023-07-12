@@ -12,7 +12,7 @@ interface FormValues {
   name: string;
   description: string;
   price: string;
-  image: File | null;
+  image: string[];
   condition: string;
   location: string;
   category: string;
@@ -27,7 +27,7 @@ const AddProduct: NextPage = () => {
       name: "",
       description: "",
       price: "",
-      image: null,
+      image: [],
       condition: 'new',
       location: '',
       category: ''
@@ -40,7 +40,8 @@ const AddProduct: NextPage = () => {
           price: parseInt(values.price),
         })
         .then(() => {
-          router.push("/");
+          // router.push("/");
+          console.log(values,'produk sukses ditambahkan ')
         });
     },
   });
@@ -52,15 +53,24 @@ const AddProduct: NextPage = () => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
-      const image = URL.createObjectURL(file);
+      const reader = new FileReader();
 
-      setSelectedImages((previousImages) => {
-        const updatedImages = [...previousImages];
-        updatedImages[index] = image;
-        return updatedImages;
-      });
+      reader.onload = () => {
+        const imageString = reader.result as string;
+  
+        setSelectedImages((previousImages) => {
+          const updatedImages = [...previousImages];
+          updatedImages[index] = imageString;
+          return updatedImages;
+        });
+  
+        formik.setFieldValue('image', [...formik.values.image, imageString]);
+      };
+
+      reader.readAsDataURL(file);
     }
   };
+
   const formatPrice = (value: string): string => {
     const formattedValue = value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return formattedValue;
@@ -176,10 +186,14 @@ const AddProduct: NextPage = () => {
           <div className="mb-4">
             <label className="text-gray-700 text-sm font-bold mb-2">Condition</label>
             <div className="flex items-center">
-            <input type="radio" id="condition-new" name="condition" value="new" className="form-radio"/>
+            <input 
+             onChange={formik.handleChange}
+            type="radio" id="condition-new" name="condition" value="new" className="form-radio"/>
             <label className="mr-4 ml-1">New</label>
 
-            <input type="radio" id="condition-used" name="condition" value="used" className="form-radio"/>
+            <input
+             onChange={formik.handleChange}
+             type="radio" id="condition-used" name="condition" value="used" className="form-radio"/>
             <label className=" ml-1">Used</label>
           </div>
           </div>
@@ -191,8 +205,9 @@ const AddProduct: NextPage = () => {
                 placeholder="Select a city"
                 isSearchable
                 onChange={(selectedOption) => {
-                  console.log(selectedOption);
+                  formik.setFieldValue('location', selectedOption?.value)
                 }}
+                value={cityOptions.find((option) => option.value === formik.values.location)} 
                 maxMenuHeight={5 * 40} 
               />
          </div>

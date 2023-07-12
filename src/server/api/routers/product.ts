@@ -3,7 +3,11 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/
 
 export const productRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ctx}) => {
-    return ctx.prisma.product.findMany();
+    return ctx.prisma.product.findMany({
+      include: {
+        image: true
+      }
+    });
   }),
   getProductById: protectedProcedure
     .input(z.object({ productId: z.string()}))
@@ -16,17 +20,27 @@ export const productRouter = createTRPCRouter({
     })
   ,
   create: protectedProcedure
-  .input(z.object({ name: z.string(), description: z.string(), price: z.number()}))
+  .input(z.object({ name: z.string(), description: z.string(), price: z.number(),
+  image: z.array(z.string()), condition: z.string(),location: z.string(), category: z.string(),}))
   .mutation( async ({input, ctx}) => {
     console.log(input,ctx.session.user)
+    const images = input.image.map((imageUrl) => ({ url: imageUrl }));
     const product = await ctx.prisma.product.create({
      data: {
        name: input.name,
        price: input.price,
        description: input.description,
-       authorId: ctx.session.user.id
+       image: {
+        create: images,
+      },
+       condition: input.condition,
+       location: input.location,
+       category: input.category,
+       authorId: ctx.session.user.id,
+      
      }
     })   
+   
     return product; 
   })
 });
