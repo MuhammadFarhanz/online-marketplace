@@ -4,12 +4,18 @@ import Head from "next/head";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Select from 'react-select';
+import { cityOptions } from "~/pages/utils/cityOption";
+import { categoryOptions } from "~/pages/utils/categoryOptions";
 
 interface FormValues {
   name: string;
   description: string;
   price: string;
   image: File | null;
+  condition: string;
+  location: string;
+  category: string;
 }
 
 const AddProduct: NextPage = () => {
@@ -22,6 +28,9 @@ const AddProduct: NextPage = () => {
       description: "",
       price: "",
       image: null,
+      condition: 'new',
+      location: '',
+      category: ''
     },
     onSubmit: (values: FormValues) => {
       console.log(values);
@@ -51,6 +60,21 @@ const AddProduct: NextPage = () => {
         return updatedImages;
       });
     }
+  };
+  const formatPrice = (value: string): string => {
+    const formattedValue = value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return formattedValue;
+  };
+
+  const handleInputPriceChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    let inputValue = event.target.value;
+    inputValue = inputValue.replace(/\D/g, '');
+
+    const priceLimit = 10000000000;
+    inputValue = Math.min(Number(inputValue), priceLimit).toString();
+    const formattedValue = formatPrice(inputValue);
+    formik.handleChange(event);
+    formik.setFieldValue('price', formattedValue);
   };
 
   return (
@@ -93,16 +117,20 @@ const AddProduct: NextPage = () => {
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
               Price
             </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="price"
-              type="price"
-              name="price"
-              value={formik.values.price}
-              placeholder="Enter price"
-              onChange={formik.handleChange}
-            />
+            <div className="flex flex-row">
+            <span className="flex items-center bg-gray-400 rounded rounded-r-none px-3 font-bold ">Rp</span>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="price"
+                  type="price"
+                  name="price"
+                  value={formik.values.price}
+                  placeholder="Enter price"
+                  onChange={handleInputPriceChange}
+                />
+            </div>
           </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Image</label>
             <div className="flex flex-wrap">
@@ -143,7 +171,47 @@ const AddProduct: NextPage = () => {
                 </label>
               ))}
             </div>
+          </div> 
+
+          <div className="mb-4">
+            <label className="text-gray-700 text-sm font-bold mb-2">Condition</label>
+            <div className="flex items-center">
+            <input type="radio" id="condition-new" name="condition" value="new" className="form-radio"/>
+            <label className="mr-4 ml-1">New</label>
+
+            <input type="radio" id="condition-used" name="condition" value="used" className="form-radio"/>
+            <label className=" ml-1">Used</label>
           </div>
+          </div>
+
+         <div className="mb-4">
+         <label className="block mb-2 text-sm  text-gray-900 font-bold">Location</label>
+         <Select
+                options={cityOptions}
+                placeholder="Select a city"
+                isSearchable
+                onChange={(selectedOption) => {
+                  console.log(selectedOption);
+                }}
+                maxMenuHeight={5 * 40} 
+              />
+         </div>
+
+   
+         <div className="mb-4">
+            <label className="block mb-2 text-sm text-gray-900 font-bold">Category</label>
+            <Select
+              options={categoryOptions}
+              placeholder="Select a category"
+              isSearchable
+              maxMenuHeight={5 * 40} 
+              onChange={(selectedOption) => {
+                formik.setFieldValue('category', selectedOption?.value || '');
+              }}
+              value={categoryOptions.find((option) => option.value === formik.values.category)}
+            />
+          </div>
+
           <div className="flex items-center justify-end">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
