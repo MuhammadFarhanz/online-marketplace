@@ -5,33 +5,45 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 
 function ProductCard ({ product }: any) {
+    console.log(product)
     
     return(
-      <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-          <a href="#">
-              <img className="rounded-t-lg" src="/docs/images/blog/image-1.jpg" alt="" />
+  
+
+        <Link 
+        prefetch={false}
+         href={`/features/product/${product?.id}`}
+        //    as={`/product/${product?.id}`}
+       
+         >
+          <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+          <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
+            <img className="object-cover" 
+            src={product?.image[0]?.url} alt="product image" />
+          
           </a>
-          <div className="p-5">
-              <a href="#">
-                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {product?.name}
-                  </h5>
-              </a>
-              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-              {product?.description}</p>
-              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-              Rp.{product?.price}</p>
-              <Link 
-               href={`/features/product/${product?.id}`}
-            //    as={`/product/${product?.id}`}
-               className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  Read more
-                  <svg aria-hidden="true" className="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-              </Link>
-            
+          <div className="mt-4 px-5 pb-5">
+            <a href="#">
+              <h5 className="text-xl tracking-tight text-slate-900">{product.name}</h5>
+            </a>
+            <div className="mt-2 mb-5 flex items-center justify-between">
+              <p>
+                <span className="text-lg font-bold  text-slate-900">Rp {product.price}</span>
+               
+              </p>
+              <span className="text-lg font-bold  text-slate-900"> {product.location}</span>
+            </div>
+            <a href="#" className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+              <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Add to cart</a
+            >
           </div>
-      </div>
+        </div>
+        </Link>
       )
   }
 
   export default ProductCard;
+

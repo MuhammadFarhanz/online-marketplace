@@ -4,7 +4,7 @@ import AuthShowcase from "../features/sign-in";
  
 export default function Navbar() {
     const { data: sessionData } = useSession();
-    // console.log(sessionData)
+    // console.log(sessionData?.user)
 
   return (
     <nav className="border-gray-200 bg-white dark:bg-gray-900">
@@ -143,11 +143,19 @@ export default function Navbar() {
                 </Link>
               </li>}
            
-           
-         
               <li>
                <AuthShowcase/>
               </li>
+
+            {sessionData ? 
+              <li className=" w-10 h-10">
+              <img className='rounded-full' src={sessionData?.user?.image ?? ''} alt="User Image"/>
+
+            
+            </li>
+
+          : null
+            }
 
     
             </ul>

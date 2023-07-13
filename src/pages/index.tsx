@@ -9,7 +9,7 @@ import ProductCard from "./components/productCard";
 export default function Home() {
   const products = api.product.getAll.useQuery()
 
-  console.log(products.data)
+  // console.log(products.data)
   return (
     <>
       <Head>

@@ -7,6 +7,9 @@ import { useState } from "react";
 import Select from 'react-select';
 import { cityOptions } from "~/pages/utils/cityOption";
 import { categoryOptions } from "~/pages/utils/categoryOptions";
+import { z } from "zod";
+import * as yup from 'yup';
+import { useCreateProduct } from "~/pages/hooks/useCreateProduct";
 
 interface FormValues {
   name: string;
@@ -19,30 +22,32 @@ interface FormValues {
 }
 
 const AddProduct: NextPage = () => {
-  const createProduct = api.product.create.useMutation();
   const router = useRouter();
+  const createProduct = useCreateProduct();
+
+  const validationSchema = yup.object().shape({
+    name: yup.string().required('Name is required'),
+    description: yup.string().min(10, 'Description should contain at least 10 characters').required('Description is required'),
+    price: yup.string(),
+    image: yup.array().of(yup.string()).required('Image is required'),
+    condition: yup.string().required('Condition is required'),
+    location: yup.string().required('Location is required'),
+    category: yup.string().required('Category is required'),
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
       name: "",
       description: "",
-      price: "",
+      price: '',
       image: [],
       condition: 'new',
       location: '',
       category: ''
     },
+    validationSchema: validationSchema,
     onSubmit: (values: FormValues) => {
-      console.log(values);
-      createProduct
-        .mutateAsync({
-          ...values,
-          price: parseInt(values.price),
-        })
-        .then(() => {
-          // router.push("/");
-          console.log(values,'produk sukses ditambahkan ')
-        });
+      createProduct(values);
     },
   });
 
@@ -109,6 +114,9 @@ const AddProduct: NextPage = () => {
               value={formik.values.name}
               onChange={formik.handleChange}
             />
+           
+            <div className="text-red-500">{formik.errors.name}</div>
+            
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
@@ -122,6 +130,7 @@ const AddProduct: NextPage = () => {
               placeholder="Description"
               onChange={formik.handleChange}
             />
+             <div className="text-red-500 text-sm">{formik.errors.description}</div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
@@ -188,12 +197,12 @@ const AddProduct: NextPage = () => {
             <div className="flex items-center">
             <input 
              onChange={formik.handleChange}
-            type="radio" id="condition-new" name="condition" value="new" className="form-radio"/>
+            type="radio" id="condition-new" name="condition" value="new" className="form-radio"  checked={formik.values.condition === "new"}/>
             <label className="mr-4 ml-1">New</label>
 
             <input
              onChange={formik.handleChange}
-             type="radio" id="condition-used" name="condition" value="used" className="form-radio"/>
+             type="radio" id="condition-used" name="condition" value="used" className="form-radio" checked={formik.values.condition === "used"}/>
             <label className=" ml-1">Used</label>
           </div>
           </div>

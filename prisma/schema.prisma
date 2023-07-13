@@ -71,7 +71,7 @@ model Product {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     name        String
-    price       Int
+    price       String
     description String
     authorId    String
     condition   String
@@ -84,7 +84,7 @@ model Image {
     id        String  @id @default(cuid())
     url       String
     productId String
-    product   Product @relation(fields: [productId], references: [id])
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Message {
