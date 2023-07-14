@@ -4,7 +4,7 @@ import AuthShowcase from "../features/sign-in";
  
 export default function Navbar() {
     const { data: sessionData } = useSession();
-    // console.log(sessionData?.user)
+    console.log(sessionData?.user)
 
   return (
     <nav className="border-gray-200 bg-white dark:bg-gray-900">

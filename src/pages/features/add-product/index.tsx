@@ -28,8 +28,8 @@ const AddProduct: NextPage = () => {
   const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),
     description: yup.string().min(10, 'Description should contain at least 10 characters').required('Description is required'),
-    price: yup.string(),
-    image: yup.array().of(yup.string()).required('Image is required'),
+    price: yup.string().min(3, 'The minimum product price is IDR 100').required('Price is required'),
+    image:  yup.array().of(yup.string()).min(1, 'At least one image is required'),  
     condition: yup.string().required('Condition is required'),
     location: yup.string().required('Location is required'),
     category: yup.string().required('Category is required'),
@@ -48,6 +48,12 @@ const AddProduct: NextPage = () => {
     validationSchema: validationSchema,
     onSubmit: (values: FormValues) => {
       createProduct(values);
+          setShowSuccessToast(true);
+
+    // Hide success message toast after 3 seconds
+    setTimeout(() => {
+      setShowSuccessToast(false);
+    }, 3000);
     },
   });
 
@@ -92,6 +98,27 @@ const AddProduct: NextPage = () => {
     formik.setFieldValue('price', formattedValue);
   };
 
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+  interface SuccessToastProps {
+    message: string;
+    show: boolean;
+  }
+
+  const SuccessToast: React.FC<SuccessToastProps> = ({ message, show }) => {
+    return (
+      <>
+        {show && (
+          <div className="fixed bottom-5 right-5 z-50">
+            <div className="bg-green-500 text-white rounded-md p-4 shadow-md">
+              {message}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  };
+  
   return (
     <>
       <Head>
@@ -101,21 +128,32 @@ const AddProduct: NextPage = () => {
       </Head>
       <div className="max-w-4xl mx-auto container">
         <form onSubmit={formik.handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+           {/* Success toast */}
+        <SuccessToast
+          message="Product created successfully!"
+          show={showSuccessToast}
+        />
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
               Name
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               className={`shadow appearance-none border  rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                formik.touched.name && formik.errors.name ? 'border-red-500 border' : ''
+              }`}
               id="name"
               type="name"
               name="name"
               placeholder="Enter name"
               value={formik.values.name}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
            
-            <div className="text-red-500">{formik.errors.name}</div>
+           {formik.touched.name && formik.errors.name && (
+              <div className="text-red-500">{formik.errors.name }</div>
+            )}
             
           </div>
           <div className="mb-4">
@@ -123,14 +161,20 @@ const AddProduct: NextPage = () => {
               Description
             </label>
             <textarea
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3
+               text-gray-700 leading-tight focus:outline-none focus:shadow-outline 
+               ${ formik.touched.description && formik.errors.description ? 'border-red-500 border' : ''
+              }`}
               id="description"
               name="description"
               value={formik.values.description}
               placeholder="Description"
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
-             <div className="text-red-500 text-sm">{formik.errors.description}</div>
+             {formik.touched.description && formik.errors.description && (
+              <div className="text-red-500">{formik.errors.description}</div>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
@@ -139,15 +183,23 @@ const AddProduct: NextPage = () => {
             <div className="flex flex-row">
             <span className="flex items-center bg-gray-400 rounded rounded-r-none px-3 font-bold ">Rp</span>
                 <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none rounded w-full py-2 px-3 text-gray-700
+                  leading-tight focus:outline-none focus:shadow-outline 
+                  ${ formik.touched.price && formik.errors.price ? 'border-red-500 border' : '' }`}
                   id="price"
                   type="price"
                   name="price"
                   value={formik.values.price}
                   placeholder="Enter price"
                   onChange={handleInputPriceChange}
+                  onBlur={formik.handleBlur}
                 />
+                 
+            
             </div>
+            {formik.touched.price && formik.errors.price && (
+              <div className="text-red-500">{formik.errors.price}</div>
+            )}
           </div>
 
           <div className="mb-4">
@@ -159,7 +211,7 @@ const AddProduct: NextPage = () => {
                   htmlFor={`dropzone-file-${index}`}
                   className={`flex items-center justify-center w-24 h-24 border-2 ${
                     selectedImages[index] ? "border-solid" : "border-dashed"
-                  } rounded-lg cursor-pointer mx-2 my-2`}
+                  } rounded-lg cursor-pointer mx-2 my-2 ${ formik.touched.image && formik.errors.image ? 'border-red-500 border-dashed' : '' }`}
                 >
                   {selectedImages[index] ? (
                     <img src={selectedImages[index]} alt="upload" className="object-cover w-20 h-20" />
@@ -185,11 +237,15 @@ const AddProduct: NextPage = () => {
                     type="file"
                     className="hidden"
                     accept="image/*"
+                    onBlur={formik.handleBlur}
                     onChange={(event) => handleImageChange(event, index)}
                   />
                 </label>
               ))}
             </div>
+            {formik.touched.image && formik.errors.image && (
+              <div className="text-red-500">{formik.errors.image}</div>
+            )}
           </div> 
 
           <div className="mb-4">
@@ -219,6 +275,9 @@ const AddProduct: NextPage = () => {
                 value={cityOptions.find((option) => option.value === formik.values.location)} 
                 maxMenuHeight={5 * 40} 
               />
+                {formik.touched.location && formik.errors.location && (
+              <div className="text-red-500">{formik.errors.location }</div>
+            )}
          </div>
 
    
@@ -234,6 +293,9 @@ const AddProduct: NextPage = () => {
               }}
               value={categoryOptions.find((option) => option.value === formik.values.category)}
             />
+                  {formik.touched.category && formik.errors.category && (
+              <div className="text-red-500">{formik.errors.category }</div>
+            )}
           </div>
 
           <div className="flex items-center justify-end">
