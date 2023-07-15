@@ -71,10 +71,11 @@ const AddProduct: NextPage = () => {
         setSelectedImage((previousImages) => {
           const updatedImages = [...previousImages];
           updatedImages[index] = imageString;
+          formik.setFieldValue('image', updatedImages);
           return updatedImages;
         });
-        formik.setFieldValue('image', selectedImage);
       };
+  
 
       reader.readAsDataURL(file);
     }

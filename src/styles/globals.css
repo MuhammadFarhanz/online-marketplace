@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'futura';
+    src: url('./fonts/FuturaLT-Bold.ttf') format('truetype'); /* 'truetype' instead of 'woff2' */
+  }
+  
+  @font-face {
+    font-family: 'helvetica';
+    src: url('./fonts/Helvetica Neue Regular.otf') format('opentype'); /* 'opentype' instead of 'woff2' */
+  }

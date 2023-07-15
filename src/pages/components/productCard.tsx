@@ -10,20 +10,20 @@ function ProductCard({ product }: any) {
       href={`/features/product/${product?.id}`}
       //    as={`/product/${product?.id}`}
     >
-      <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+      <div className="relative m-10 flex w-full max-w-xs flex-col font-helvetica overflow-hidden border border-gray-100 bg-[#E9E9E9] shadow-md">
         <a
-          className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
+          className="relative mx-3 mt-3 flex h-60 overflow-hidden "
           href="#"
         >
           <img
-            className="object-cover"
+            className="object-cover w-full"
             src={product?.image[0]?.url}
             alt="product image"
           />
         </a>
         <div className="mt-4 px-5 pb-5">
           <a href="#">
-            <h5 className="text-xl tracking-tight text-slate-900">
+            <h5 className="text-xl tracking-tight text-slate-900 font-bold truncate">
               {product.name}
             </h5>
           </a>
@@ -40,7 +40,7 @@ function ProductCard({ product }: any) {
           </div>
           <a
             href="#"
-            className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            className="flex items-center justify-center rounded-sm bg-black px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
