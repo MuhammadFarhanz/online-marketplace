@@ -15,6 +15,9 @@ export const productRouter = createTRPCRouter({
       return ctx.prisma.product.findUnique({
         where:{
           id: input.productId
+        },
+        include: {
+          image: true
         }
       })
     })

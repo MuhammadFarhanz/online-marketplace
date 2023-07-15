@@ -59,23 +59,21 @@ const AddProduct: NextPage = () => {
 
   const labels = [1, 2, 3, 4, 5];
 
-  const [selectedImages, setSelectedImages] = useState<Array<string>>([]);
+  const [selectedImage, setSelectedImage] = useState<string[]>([]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>,index: number) => {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
       const reader = new FileReader();
 
       reader.onload = () => {
         const imageString = reader.result as string;
-  
-        setSelectedImages((previousImages) => {
+        setSelectedImage((previousImages) => {
           const updatedImages = [...previousImages];
           updatedImages[index] = imageString;
           return updatedImages;
         });
-  
-        formik.setFieldValue('image', [...formik.values.image, imageString]);
+        formik.setFieldValue('image', selectedImage);
       };
 
       reader.readAsDataURL(file);
@@ -210,35 +208,35 @@ const AddProduct: NextPage = () => {
                   key={index}
                   htmlFor={`dropzone-file-${index}`}
                   className={`flex items-center justify-center w-24 h-24 border-2 ${
-                    selectedImages[index] ? "border-solid" : "border-dashed"
+                    selectedImage ? "border-solid" : "border-dashed"
                   } rounded-lg cursor-pointer mx-2 my-2 ${ formik.touched.image && formik.errors.image ? 'border-red-500 border-dashed' : '' }`}
                 >
-                  {selectedImages[index] ? (
-                    <img src={selectedImages[index]} alt="upload" className="object-cover w-20 h-20" />
-                  ) : (
-                    <svg
-                      className="w-8 h-8 text-gray-500 dark:text-gray-400"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 16"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                      />
-                    </svg>
-                  )}
+                  {selectedImage[index] ? (
+                <img src={selectedImage[index]} alt="upload" className="object-cover w-20 h-20" />
+              ) : (
+                <svg
+                  className="w-8 h-8 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                  />
+                </svg>
+              )}
                   <input
                     id={`dropzone-file-${index}`}
                     type="file"
                     className="hidden"
                     accept="image/*"
                     onBlur={formik.handleBlur}
-                    onChange={(event) => handleImageChange(event, index)}
+                    onChange={(event) => handleImageChange(event,index)}
                   />
                 </label>
               ))}
