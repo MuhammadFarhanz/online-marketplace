@@ -17,5 +17,5 @@ export async function middleware(req: NextApiRequest, res: NextApiResponse) {
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: '/features/product/:path*',
+  matcher: ['/features/product/:path*','/features/chat','/features/add-product'],
 }

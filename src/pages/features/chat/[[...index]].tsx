@@ -10,29 +10,38 @@ import { api } from "~/utils/api";
 
 const Chat: NextPage = () => {
   const createMessage = api.message.sendMessage.useMutation()
-  const product = useGetProductById()
+  const createMessageToUser = api.message.sendMessageToUser.useMutation()
+  const { data, error } = useGetProductById();
+  const router = useRouter();
+  const { recipient } = router.query;
   // const product = product?.data
   interface Message {
     message: string,
   }
-
+  const [messages, setMessages] = useState<string[]>([]);
+  
+console.log(data)
   const formik = useFormik<Message>({
     initialValues: {
       message: '',
     },
     onSubmit: async (values: Message,{ resetForm }) => {
-      if (product?.authorId) {
-        await createMessage.mutateAsync({
+
+      if (recipient) {
+
+       const response: string = await createMessageToUser.mutateAsync({
           message: values.message,
-          productId: product.id,
-          toUser: product.authorId,
+          authorId: recipient as string,
         });
+
+        setMessages((prevMessages) => [...prevMessages, response]);
+
       } else {
-        await createMessage.mutateAsync({
-          message: values.message,
-          productId: '',
-          toUser: '',
-        });
+        // await createMessage.mutateAsync({
+        //   message: values.message,
+        //   productId: '',
+        //   toUser: '',
+        // });
         console.log('id does not exist');
       }
       resetForm()
@@ -43,7 +52,7 @@ const Chat: NextPage = () => {
     return (
      <>
       <div className="bg-blue-400">
-        <p>{product?.name}</p>
+        <p>{data?.name}</p>
 
       </div>
      </>
@@ -61,8 +70,11 @@ const Chat: NextPage = () => {
         <h1 className="text-4xl text-white m-4 ml-0">chat</h1>
       <div className="bg-blue-400 flex h-[80vh] ">
         <div className="bg-red-300 w-1/3"></div>
-        <div className="bg-green-300 w-full relative">select user to start a chat
-          {product && <Card/>}
+        <div className="bg-green-300 w-full relative">
+          select user to start a chat
+        <div>Chat Page - Chat with Author ID: {recipient}</div>;
+          {data && <Card/>}
+          {messages}
             <form onSubmit={formik.handleSubmit}
           className="bg-transparent shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
             <div className="flex">

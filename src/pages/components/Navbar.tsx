@@ -116,8 +116,8 @@ export default function Navbar() {
               <li>
                 <Link
                   href="/"
-                  className="block rounded  py-2 pl-3 pr-4 text-white 
-                  md:bg-transparent md:p-0 "
+                  className="block rounded py-2 pl-3 pr-4 text-white 
+                  md:bg-transparent md:p-0 hover:text-purple-500 "
                   aria-current="page"
                 >
                  HOME
@@ -128,7 +128,7 @@ export default function Navbar() {
               <li>
               <Link
                 href="/features/chat"
-                className="block rounded py-2 pl-3 pr-4 text-white md:bg-transparent md:p-0"
+                className="block rounded py-2 pl-3 pr-4 text-white md:bg-transparent md:p-0 hover:text-purple-500 "
                 aria-current="page"
               >
                 CHAT
@@ -140,8 +140,7 @@ export default function Navbar() {
                 <Link
                   href="/features/add-product"
                   // as={'/add-product'}
-                  className="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
-                >
+                  className="block rounded hover:text-purple-500 py-2 pl-3 pr-4 text-white  md:p-0" >
                 ADD PRODUCT
                 </Link>
               </li>}

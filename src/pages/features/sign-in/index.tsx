@@ -4,12 +4,12 @@ import { signIn, signOut, useSession } from "next-auth/react";
     const { data: sessionData } = useSession();
 
     return (
-      <div className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col items-center justify-center gap-4 font-helvetica ">
         <button
-          className="rounded-full bg-white/10 px-4 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
+          className=" text-white no-underline transition hover:text-purple-500"
           onClick={sessionData ? () => void signOut() : () => void signIn()}
         >
-          {sessionData ? "Sign out" : "Sign in"}
+          {sessionData ? "SIGN OUT" : "SIGN IN"}
         </button>
       </div>
     );
