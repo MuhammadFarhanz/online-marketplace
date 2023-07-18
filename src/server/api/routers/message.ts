@@ -113,6 +113,18 @@ export const messageRouter = createTRPCRouter({
       },
 
     })
+  }),
+  getConversation: publicProcedure
+  .input(z.object({conversationId: z.string()}))
+  .query(({ctx,input}) => {
+    return ctx.prisma.conversation.findFirst({
+      where:{
+        id: input.conversationId
+      },
+      include:{
+        messages: true
+      }
+    })
   })
   
 
