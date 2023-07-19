@@ -1,93 +1,17 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const messageRouter = createTRPCRouter({
-  // sendMessage: protectedProcedure
-  // .input(z.object({message: z.string(), productId: z.string(),
-  //   toUser: z.string()
-  // }))
-  // .mutation(async ({ctx, input}) => {
-  //   console.log(input,'ini input dari trpc')
-  //   const message = await ctx.prisma.message.create({
-  //     data:{
-  //        fromUser: ctx.session.user.id,
-  //        fromUserName: ctx.session.user.name ?? "unknown",      
-  //        toUser: input.toUser,
-  //        message: input.message,
-  //        productId: input.productId
-  //     }
-  //   })
-  //   return message;
-  // }),
-  sendMessageToUser: protectedProcedure
-  .input(z.object({message: z.string(), authorId: z.string()}))
-  .mutation(async ({ctx, input}) => {
-    try {
-
-      const author = await ctx.prisma.user.findUnique({
-        where: {
-          id: input.authorId,
-        },
-      });
-
-      if (!author) {
-        throw new Error("Author not found.");
-      }
-
-      let conversation = await ctx.prisma.conversation.findFirst({
-        where: {
-          conversationUsers: {
-            every: {
-              userId: {
-                in: [ctx.session.user.id, input.authorId],
-              },
-            },
-          },
-        },
-      });
-
-  
-      if (!conversation) {
-        conversation = await ctx.prisma.conversation.create({
-          data: {
-            conversationUsers: {
-              create: [
-                { userId: ctx.session.user.id },
-                { userId: input.authorId },
-              ],
-            },
-          },
-        });
-      }
-
-      const message = await ctx.prisma.message.create({
-        data: {
-          message: input.message,
-          user: {
-            connect: {
-              id: ctx.session.user.id,
-            },
-          },
-          conversation: {
-            connect: {
-              id: conversation?.id,
-            },
-          },
-        },
-      });
- 
-      return message.message; 
-    } catch (error:any) {
-      throw new Error("Error sending the message: " + error.message);
-    }
-  }),
-  conversations: protectedProcedure
-  .query(({ctx}) => {
+  conversations: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.conversationUser.findMany({
-      where:{
-        userId: ctx.session.user.id
+      where: {
+        userId: ctx.session.user.id,
       },
-           include: {
+      include: {
         conversation: {
           include: {
             conversationUsers: {
@@ -98,6 +22,7 @@ export const messageRouter = createTRPCRouter({
                     name: true,
                     image: true,
                     // username: true,
+                    message: true,
                   },
                 },
               },
@@ -111,21 +36,132 @@ export const messageRouter = createTRPCRouter({
           lastMessageId: "desc",
         },
       },
-
-    })
+    });
   }),
-  getConversation: publicProcedure
-  .input(z.object({conversationId: z.string()}))
-  .query(({ctx,input}) => {
-    return ctx.prisma.conversation.findFirst({
-      where:{
-        id: input.conversationId
-      },
-      include:{
-        messages: true
-      }
-    })
-  })
-  
 
+  findConversation: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input: { userId }, ctx }) => {
+      //U1 conversations: [c1, c2]
+      //U2 conversations: [c1]
+      //[(c1:u2, c1:u1), (c2:u1)]
+      const conversationUser = await ctx.prisma.conversationUser.groupBy({
+        by: ["conversationId"],
+        where: {
+          userId: {
+            in: [userId, ctx.session.user.id],
+          },
+        },
+        having: {
+          userId: {
+            _count: {
+              equals: 2,
+            },
+          },
+        },
+      });
+      return conversationUser.length
+        ? conversationUser[0]?.conversationId
+        : null;
+    }),
+
+  messages: protectedProcedure
+    .input(z.object({ conversationId: z.string() }))
+    .query(async ({ input: { conversationId }, ctx }) => {
+      await ctx.prisma.conversationUser.findUniqueOrThrow({
+        where: {
+          userId_conversationId: {
+            userId: ctx.session.user.id,
+            conversationId,
+          },
+        },
+      });
+      return ctx.prisma.message.findMany({
+        where: {
+          conversationId,
+        },
+        orderBy: {
+          id: "asc",
+        },
+      });
+    }),
+
+  sendMessage: protectedProcedure
+    .input(
+      z.object({
+        conversationId: z.string().nullish(),
+        messageText: z.string(),
+        userId: z.string().nullish(),
+      })
+    )
+    .mutation(async ({ input: { messageText, conversationId, userId }, ctx }) => {
+      if (!conversationId) {
+        if (!userId) {
+          throw new Error("No recipient passed");
+        }
+
+        return ctx.prisma.$transaction(async (trx) => {
+          const conversation = await trx.conversation.create({
+            data: {
+              messages: {
+                create: {
+                  message: messageText,
+                  userId: ctx.session.user.id,
+                },
+              },
+              conversationUsers: {
+                createMany: {
+                  data: [{ userId }, { userId: ctx.session.user.id }],
+                },
+              },
+            },
+            include: {
+              messages: true,
+            },
+          });
+
+          await trx.conversation.update({
+            data:{
+              lastMessageId: conversation.messages[0]!.id
+            },
+            where:{
+              id: conversation.id
+            }
+           })
+           return conversation;
+        });
+      }
+
+    await ctx.prisma.$transaction( async (trx) => {
+      const [message] = await Promise.all([
+     trx.message.create({
+        data: {
+          message: messageText,
+          userId: ctx.session.user.id,
+          conversationId,
+        }
+      }),
+      trx.conversationUser.findUniqueOrThrow({
+        where:{
+            userId_conversationId: {
+              userId: ctx.session.user.id,
+              conversationId
+           },
+        },
+      }),
+     ])
+
+     await trx.conversation.update({
+      data:{
+        lastMessageId: message.id,
+      },
+      where:{
+        id: conversationId
+      }
+     })
+    })
+
+
+
+    }),
 });
