@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
 import ConversationCard from "./conversation";
+import { useGetConversations } from "~/pages/hooks/useGetConversation";
 
 
 const Chat: NextPage = () => {
   // const createMessage = api.message.sendMessage.useMutation()
   const createMessageToUser = api.message.sendMessageToUser.useMutation()
   const  conversationsData = api.message.conversations.useQuery()
-  const { data, error } = useGetProductById();
+  // const { data, error } = useGetProductById();
   const router = useRouter();
   const { recipient } = router.query;
   const conversations = conversationsData?.data || [];
@@ -54,13 +55,34 @@ const Chat: NextPage = () => {
   const [selectedConversationMessages, setSelectedConversationMessages] = useState<any[]>([]);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
 
-  const handleConversationClick = (data: any) => {
-    setSelectedConversationId(data.conversation.id);
-  };
+  interface ConversationCardProps {
+    data: any;
+  }
 
-  const handleConversationDataFetched = (data: any) => {
-    setSelectedConversationMessages(data?.messages || []);
+  const conversationsDetail = api.message.getConversation.useQuery({
+    conversationId: selectedConversationId ?? "",
+  });
+
+  useEffect(() => {
+    if (selectedConversationId && conversationsDetail.data) {
+      setSelectedConversationMessages(conversationsDetail.data.messages || []);
+    }
+  }, [selectedConversationId, conversationsDetail.data]);
+
+
+  const ConversationCard: React.FC<ConversationCardProps> = ({data}) => {
+    const recipient = data.conversation.conversationUsers[0]?.userId === data.userId
+        ? data.conversation.conversationUsers[1]?.user
+        : data.conversation.conversationUsers[0]?.user;
+
+      return (
+      <div className="bg-black h-20 text-white flex p-4" onClick={() =>  setSelectedConversationId(data.conversationId)} >
+        <img src={recipient.image} className="rounded-full w-12" alt="Recipient" />
+        {recipient.name}
+      </div>
+      );
   };
+  
 
 
   return (
@@ -76,12 +98,13 @@ const Chat: NextPage = () => {
       <div className="flex  h-[80vh] ">
         <div className="border-black border-2 border-r-0 w-1/3 flex flex-col">
          {conversations?.map((conversationData: any) => (
+         
             <ConversationCard
               key={conversationData.id}
               data={conversationData}
-              onClick={handleConversationClick}
-              selectedConversationId={selectedConversationId}
-              onConversationDataFetched={handleConversationDataFetched} 
+              // onClick={handleConversationClick}
+              // selectedConversationId={selectedConversationId}
+              // onConversationDataFetched={handleConversationDataFetched} 
             />
           ))}
         </div>
@@ -90,9 +113,9 @@ const Chat: NextPage = () => {
           select user to start a chat
         <div>Chat Page - Chat with Author ID: {recipient}</div>;
     
-          {selectedConversationMessages.map((message: any) => (
+           {selectedConversationMessages.map((message: any) => (
           <div key={message.id}>{message.message}</div>
-          ))}
+          ))} 
             <form onSubmit={formik.handleSubmit}
           className=" border-black border-t-2 shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
             <div className="flex">
