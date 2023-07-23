@@ -6,85 +6,88 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
-import ConversationCard from "./conversation";
+// import ConversationCard from "./conversation";
 import { useGetConversations } from "~/pages/hooks/useGetConversation";
+import { useSession } from "next-auth/react";
+import useGetMessages from "~/pages/hooks/useGetMessage";
+import useFindConversation from "~/pages/hooks/useFindConversation";
 
 
 const Chat: NextPage = () => {
-  // const createMessage = api.message.sendMessage.useMutation()
-  const createMessageToUser = api.message.sendMessageToUser.useMutation()
-  const  conversationsData = api.message.conversations.useQuery()
-  // const { data, error } = useGetProductById();
+  const sendMessageMutataion = api.message.sendMessage.useMutation()
+  const {data: conversations} = api.message.conversations.useQuery()
   const router = useRouter();
   const { recipient } = router.query;
-  const conversations = conversationsData?.data || [];
- 
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const messages = useGetMessages(selectedConversationId);
+  // const user = useSession()
+  // console.log(user.data?.user.id)
+  const { id: sender } = useSession().data?.user || {};
+  // const recipientId = typeof recipient === "string" ? recipient : null;
+  console.log(recipient,'ini receipent')
+  const findconversation = useFindConversation(recipient)
+
+  // console.log(findconversation,'ini id conversation')
+  useEffect(() => {
+    // Update the selectedConversationId when the conversation data is available
+    if (findconversation) {
+      setSelectedConversationId(findconversation);
+    }
+  }, [findconversation]);
   interface Message {
     message: string,
   }
-  const [messages, setMessages] = useState<string[]>([]);
 
   const formik = useFormik<Message>({
     initialValues: {
       message: '',
     },
     onSubmit: async (values: Message,{ resetForm }) => {
-
       if (recipient) {
-
-       const response: string = await createMessageToUser.mutateAsync({
-          message: values.message,
-          authorId: recipient as string,
-        });
-
-        setMessages((prevMessages) => [...prevMessages, response]);
+        const message = await sendMessageMutataion.mutateAsync({
+          messageText: values.message,
+          conversationId: selectedConversationId,
+          userId: recipient?.[0] ?? null,
+        })
 
       } else {
-        // await createMessage.mutateAsync({
-        //   message: values.message,
-        //   productId: '',
-        //   toUser: '',
-        // });
+     
         console.log('id does not exist');
       }
       resetForm()
     },
   });
-  
 
-  const [selectedConversationMessages, setSelectedConversationMessages] = useState<any[]>([]);
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
+
+
+  // const {data: messages} = api.message.messages.useQuery({ conversationId: selectedConversationId! });
+
+
+  // const [selectedConversationMessages, setSelectedConversationMessages] = useState([]);
 
   interface ConversationCardProps {
     data: any;
-  }
+    // onConversationClick: (conversationId: string) => void;
+    setSelectedConversationId: (conversationId: string) => void; // Add this prop
+}
+  
 
-  const conversationsDetail = api.message.getConversation.useQuery({
-    conversationId: selectedConversationId ?? "",
-  });
-
-  useEffect(() => {
-    if (selectedConversationId && conversationsDetail.data) {
-      setSelectedConversationMessages(conversationsDetail.data.messages || []);
-    }
-  }, [selectedConversationId, conversationsDetail.data]);
-
-
-  const ConversationCard: React.FC<ConversationCardProps> = ({data}) => {
+  const ConversationCard: React.FC<ConversationCardProps> = ({data, setSelectedConversationId }) => {
     const recipient = data.conversation.conversationUsers[0]?.userId === data.userId
         ? data.conversation.conversationUsers[1]?.user
         : data.conversation.conversationUsers[0]?.user;
 
+      
       return (
-      <div className="bg-black h-20 text-white flex p-4" onClick={() =>  setSelectedConversationId(data.conversationId)} >
+      <div className="bg-black h-20 text-white flex p-4"
+      onClick={() => setSelectedConversationId(data.conversationId)}
+       >
         <img src={recipient.image} className="rounded-full w-12" alt="Recipient" />
         {recipient.name}
       </div>
       );
   };
   
-
-
   return (
     <>
       <Head>
@@ -97,25 +100,39 @@ const Chat: NextPage = () => {
         <h1 className="text-4xl text-black m-4 ml-0">chat</h1>
       <div className="flex  h-[80vh] ">
         <div className="border-black border-2 border-r-0 w-1/3 flex flex-col">
-         {conversations?.map((conversationData: any) => (
-         
+         {conversations ? conversations?.map((conversationData: any) => (
             <ConversationCard
               key={conversationData.id}
               data={conversationData}
-              // onClick={handleConversationClick}
-              // selectedConversationId={selectedConversationId}
-              // onConversationDataFetched={handleConversationDataFetched} 
+              setSelectedConversationId={setSelectedConversationId} 
             />
-          ))}
+          )): null}
         </div>
 
         <div className="border-black border-2 w-full relative">
-          select user to start a chat
-        <div>Chat Page - Chat with Author ID: {recipient}</div>;
-    
-           {selectedConversationMessages.map((message: any) => (
-          <div key={message.id}>{message.message}</div>
-          ))} 
+         {!messages && <div> select user to start a chat</div>}
+      
+          {messages && messages?.map((message) => {
+            
+             return (
+              message.userId !== sender  ? 
+              <div className="flex items-end m-2">
+                <div className="flex flex-col space-y-2 text-md max-w-xs mx-2 order-2 items-start">
+                  <div><span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">{message.message}</span></div>
+                </div>
+              </div>
+              :
+              <div className="flex items-end justify-end m-2">
+               <div className="flex flex-col space-y-2 text-md max-w-xs mx-2 order-1 items-end">
+                <div><span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{message.message}</span></div>
+              </div>
+              
+          </div>
+             )
+
+          })
+          }   
+
             <form onSubmit={formik.handleSubmit}
           className=" border-black border-t-2 shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
             <div className="flex">
@@ -139,6 +156,7 @@ const Chat: NextPage = () => {
               </button>
             </div>
           </form>
+       
         </div>
       </div>
       </main>
