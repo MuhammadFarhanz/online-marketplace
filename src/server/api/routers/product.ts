@@ -17,7 +17,13 @@ export const productRouter = createTRPCRouter({
           id: input.productId
         },
         include: {
-          image: true
+          image: true,
+          author: {
+            select: {
+                name: true,
+                image: true
+            }
+        }
         }
       })
     })

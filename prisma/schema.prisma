@@ -63,6 +63,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    products      Product[]          @relation("author")
     message       Message[]
     conversations ConversationUser[]
 }
@@ -117,6 +118,7 @@ model Product {
     location    String
     category    String
     image       Image[]
+    author      User     @relation("author", fields: [authorId], references: [id])
 }
 
 model Image {

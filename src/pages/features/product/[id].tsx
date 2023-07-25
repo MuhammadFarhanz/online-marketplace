@@ -23,8 +23,9 @@ const ProductView: NextPage = () => {
 
 
   if (!data) {
-    return <div>Loading...</div>; // Replace with your loading UI if needed
+    return <div>Loading...</div>; // Replace with your loading UI 
   }
+  console.log(data)
 
   return (
     <>
@@ -61,6 +62,13 @@ const ProductView: NextPage = () => {
               <p className="text-gray-700 flex items-strech ">{data?.description}</p>
             </div>
             <h6 className="text-2xl font-semibold">Rp. {data?.price}</h6>
+
+              <div className=" flex items-center">
+                <img src={data?.author?.image || ''} alt="user-photo" className="h-14 rounded-full"></img>
+                <span className=" ml-4">{data?.author?.name}</span>
+              </div>
+
+          
             <div className="flex flex-row items-center gap-12">
              <Link href={`/features/chat/?recipient=${data.authorId}`}>
              <button className="bg-black text-white font-semibold py-3 px-16 h-full">Chat</button>
