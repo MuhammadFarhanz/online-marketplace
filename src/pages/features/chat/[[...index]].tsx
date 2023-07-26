@@ -3,91 +3,72 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
-// import ConversationCard from "./conversation";
 import { useGetConversations } from "~/pages/hooks/useGetConversation";
 import { useSession } from "next-auth/react";
 import useGetMessages from "~/pages/hooks/useGetMessage";
 import useFindConversation from "~/pages/hooks/useFindConversation";
+import MessageList from "~/pages/components/messageList";
+import ConversationCard from "~/pages/components/conversationCard";
+import MessageForm from "~/pages/components/messageForm";
 
 
 const Chat: NextPage = () => {
+  
   const sendMessageMutataion = api.message.sendMessage.useMutation()
   const {data: conversations} = api.message.conversations.useQuery()
-  const router = useRouter();
-  const { recipient } = router.query;
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const messages = useGetMessages(selectedConversationId);
-  // const user = useSession()
-  // console.log(user.data?.user.id)
-  const { id: sender } = useSession().data?.user || {};
-  // const recipientId = typeof recipient === "string" ? recipient : null;
-  console.log(recipient,'ini receipent')
-  const findconversation = useFindConversation(recipient)
 
-  // console.log(findconversation,'ini id conversation')
-  useEffect(() => {
-    // Update the selectedConversationId when the conversation data is available
-    if (findconversation) {
-      setSelectedConversationId(findconversation);
-    }
-  }, [findconversation]);
-  interface Message {
-    message: string,
-  }
-
-  const formik = useFormik<Message>({
-    initialValues: {
-      message: '',
-    },
-    onSubmit: async (values: Message,{ resetForm }) => {
-      if (recipient) {
-        const message = await sendMessageMutataion.mutateAsync({
-          messageText: values.message,
-          conversationId: selectedConversationId,
-          userId: recipient?.[0] ?? null,
-        })
-
-      } else {
-     
-        console.log('id does not exist');
-      }
-      resetForm()
+  const utils = api.useContext();
+  api.message.onSendMessage.useSubscription(undefined, {
+    onData: ({ conversationId }) => {
+      utils.message.conversations.invalidate();
+      utils.message.messages.invalidate({ conversationId });
+      // if (!showConversations && currentConversationId !== conversationId) {
+      //   setShowNotificationBadge(true);
+      // }
     },
   });
 
+  const router = useRouter();
+ 
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const messages = useGetMessages(selectedConversationId);
+  // const { id: sender } = useSession().data?.user || {};
+  const { recipient } = router.query;
+  const findconversation = useFindConversation(recipient)
+  const recipientId = recipient ?? '';
 
-
-  // const {data: messages} = api.message.messages.useQuery({ conversationId: selectedConversationId! });
-
-
-  // const [selectedConversationMessages, setSelectedConversationMessages] = useState([]);
-
-  interface ConversationCardProps {
-    data: any;
-    // onConversationClick: (conversationId: string) => void;
-    setSelectedConversationId: (conversationId: string) => void; // Add this prop
-}
-  
-
-  const ConversationCard: React.FC<ConversationCardProps> = ({data, setSelectedConversationId }) => {
-    const recipient = data.conversation.conversationUsers[0]?.userId === data.userId
-        ? data.conversation.conversationUsers[1]?.user
-        : data.conversation.conversationUsers[0]?.user;
-
+  useEffect(() => {
+    if (findconversation) {
+      setSelectedConversationId(findconversation);
+    }else{
       
-      return (
-      <div className="bg-black h-20 text-white flex p-4"
-      onClick={() => setSelectedConversationId(data.conversationId)}
-       >
-        <img src={recipient.image} className="rounded-full w-12" alt="Recipient" />
-        {recipient.name}
-      </div>
-      );
+    }
+  }, [findconversation]);
+
+  const handleSendMessage = async (values:any) => {
+    const recipientId = typeof recipient === 'string' ? recipient : '';
+    
+    if (findconversation) {
+      const message = await sendMessageMutataion.mutateAsync({
+        messageText: values.message,
+        conversationId: selectedConversationId,
+        userId: recipientId,
+      });
+    } else {
+      const message = await sendMessageMutataion.mutateAsync({
+        messageText: values.message,
+        conversationId: selectedConversationId,
+        userId: recipientId,
+      });
+      console.log('id does not exist');
+    }
+    setSelectedConversationId(selectedConversationId);
   };
-  
+
+  // console.log(messages)
   return (
     <>
       <Head>
@@ -96,68 +77,38 @@ const Chat: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
     <div className="bg-[#F8F8F8]">
-    <main className="  font-helvetica mx-auto flex min-h-screen flex-col container">
+    <main className="  font-helvetica mx-auto flex h-full flex-col container bg-gray-600">
         <h1 className="text-4xl text-black m-4 ml-0">chat</h1>
-      <div className="flex  h-[80vh] ">
+      <div className="flex  h-[80vh] bg-red-200 ">
         <div className="border-black border-2 border-r-0 w-1/3 flex flex-col">
-         {conversations ? conversations?.map((conversationData: any) => (
-            <ConversationCard
-              key={conversationData.id}
-              data={conversationData}
-              setSelectedConversationId={setSelectedConversationId} 
-            />
-          )): null}
+          {conversations ? conversations?.map((conversationData: any) => (
+              <ConversationCard
+                  key={conversationData.id}
+                  data={conversationData}
+                  setSelectedConversationId={setSelectedConversationId}
+                />
+              )) : null}
         </div>
 
-        <div className="border-black border-2 w-full relative">
+
+        <div className="border-black border-2 w-full relative h-full ">
          {!messages && <div> select user to start a chat</div>}
-      
-          {messages && messages?.map((message) => {
-            
-             return (
-              message.userId !== sender  ? 
-              <div className="flex items-end m-2">
-                <div className="flex flex-col space-y-2 text-md max-w-xs mx-2 order-2 items-start">
-                  <div><span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">{message.message}</span></div>
-                </div>
-              </div>
-              :
-              <div className="flex items-end justify-end m-2">
-               <div className="flex flex-col space-y-2 text-md max-w-xs mx-2 order-1 items-end">
-                <div><span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{message.message}</span></div>
-              </div>
-              
-          </div>
-             )
 
-          })
-          }   
-
-            <form onSubmit={formik.handleSubmit}
-          className=" border-black border-t-2 shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
-            <div className="flex">
-              <input
-                className="shadow appearance-none border rounded-full w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="message"
-                name="message"
-                placeholder="Enter name"
-                value={formik.values.message}
-                onChange={formik.handleChange}
-              />
-        
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 ml-2 rounded-full focus:outline-none focus:shadow-outline"
-                type="submit"
-              >
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-              </svg>
-
-              </button>
-            </div>
-          </form>
-       
+         <div className="  mb-30 h-[90%] overflow-y-auto ">
+          {messages && (<MessageList messages={messages} />)}
         </div>
+            
+
+           {messages || recipient ? (
+                 
+        <div className="">
+        <MessageForm onSubmit={handleSendMessage} />
+        </div>
+
+           ): null} 
+
+        </div>
+       
       </div>
       </main>
     </div>
@@ -165,4 +116,4 @@ const Chat: NextPage = () => {
   );
 };
 
-export default Chat;
+export default memo(Chat);
