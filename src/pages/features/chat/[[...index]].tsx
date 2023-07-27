@@ -3,10 +3,9 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
-import { useGetConversations } from "~/pages/hooks/useGetConversation";
 import { useSession } from "next-auth/react";
 import useGetMessages from "~/pages/hooks/useGetMessage";
 import useFindConversation from "~/pages/hooks/useFindConversation";
@@ -14,12 +13,8 @@ import MessageList from "~/pages/components/messageList";
 import ConversationCard from "~/pages/components/conversationCard";
 import MessageForm from "~/pages/components/messageForm";
 
-
 const Chat: NextPage = () => {
-  
-  const sendMessageMutataion = api.message.sendMessage.useMutation()
   const {data: conversations} = api.message.conversations.useQuery()
-
   const utils = api.useContext();
   api.message.onSendMessage.useSubscription(undefined, {
     onData: ({ conversationId }) => {
@@ -48,27 +43,6 @@ const Chat: NextPage = () => {
     }
   }, [findconversation]);
 
-  const handleSendMessage = async (values:any) => {
-    const recipientId = typeof recipient === 'string' ? recipient : '';
-    
-    if (findconversation) {
-      const message = await sendMessageMutataion.mutateAsync({
-        messageText: values.message,
-        conversationId: selectedConversationId,
-        userId: recipientId,
-      });
-    } else {
-      const message = await sendMessageMutataion.mutateAsync({
-        messageText: values.message,
-        conversationId: selectedConversationId,
-        userId: recipientId,
-      });
-      console.log('id does not exist');
-    }
-    setSelectedConversationId(selectedConversationId);
-  };
-
-  // console.log(messages)
   return (
     <>
       <Head>
@@ -79,7 +53,7 @@ const Chat: NextPage = () => {
     <div className="bg-[#F8F8F8]">
     <main className="  font-helvetica mx-auto flex h-full flex-col container bg-gray-600">
         <h1 className="text-4xl text-black m-4 ml-0">chat</h1>
-      <div className="flex  h-[80vh] bg-red-200 ">
+      <div className="flex  h-[80vh] ">
         <div className="border-black border-2 border-r-0 w-1/3 flex flex-col">
           {conversations ? conversations?.map((conversationData: any) => (
               <ConversationCard
@@ -101,8 +75,10 @@ const Chat: NextPage = () => {
 
            {messages || recipient ? (
                  
-        <div className="">
-        <MessageForm onSubmit={handleSendMessage} />
+          <div className="">
+          <MessageForm
+        //  onSubmit={handleSendMessage} 
+         conversationId={selectedConversationId} recipient={recipient}  />
         </div>
 
            ): null} 

@@ -1,29 +1,49 @@
 // MessageForm.tsx
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-
+import { api } from '~/utils/api';
 interface MessageFormProps {
-  onSubmit: (values: Message) => void;
+  recipient: string | string[] | undefined;
+  conversationId: string | null;
 }
-
 interface Message {
   message: string;
 }
 
-const MessageForm: React.FC<MessageFormProps> = ({ onSubmit }) => {
+const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId }) => {
+
+
+  const sendMessageMutataion = api.message.sendMessage.useMutation({
+    onSuccess: () => {console.log('sucess sending a message')},
+  })
+
   const formik = useFormik<Message>({
     initialValues: {
       message: '',
     },
     onSubmit: async (values: Message, { resetForm }) => {
-      onSubmit(values);
+      const recipientId = typeof recipient === 'string' ? recipient : '';
+      if (conversationId) {
+        const message = await sendMessageMutataion.mutateAsync({
+          messageText: values.message,
+          conversationId: conversationId,
+          userId: recipientId,
+        });
+      } else {
+        const message = await sendMessageMutataion.mutateAsync({
+          messageText: values.message,
+          conversationId: conversationId,
+          userId: recipientId,
+        });
+        console.log('id does not exist');
+      }
       resetForm();
     },
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} className="border-black border-t-2 shadow-md rounded px-8 pt-6 pb-6 absolute bottom-0 w-full">
-      <div className="flex">
+    <form onSubmit={formik.handleSubmit}  className=" h-[10%] border-black  border-t-2 shadow-md  px-8 pt-6 pb-6 absolute bottom-0 w-full">
+      <div className="flex" >
         <input
           className="shadow appearance-none border rounded-full w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="message"
