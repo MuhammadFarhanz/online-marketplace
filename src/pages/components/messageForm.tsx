@@ -2,6 +2,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import { api } from '~/utils/api';
+import { useMutation } from '@tanstack/react-query';
+import { useSendMessage } from '../hooks/useSendMessage';
 interface MessageFormProps {
   recipient: string | string[] | undefined;
   conversationId: string | null;
@@ -11,11 +13,7 @@ interface Message {
 }
 
 const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId }) => {
-
-
-  const sendMessageMutataion = api.message.sendMessage.useMutation({
-    onSuccess: () => {console.log('sucess sending a message')},
-  })
+  const sendMessage = useSendMessage()
 
   const formik = useFormik<Message>({
     initialValues: {
@@ -24,17 +22,12 @@ const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId }) 
     onSubmit: async (values: Message, { resetForm }) => {
       const recipientId = typeof recipient === 'string' ? recipient : '';
       if (conversationId) {
-        const message = await sendMessageMutataion.mutateAsync({
-          messageText: values.message,
-          conversationId: conversationId,
-          userId: recipientId,
-        });
+        sendMessage({  
+            messageText: values.message,
+            conversationId: conversationId,
+            userId: recipientId,
+        })
       } else {
-        const message = await sendMessageMutataion.mutateAsync({
-          messageText: values.message,
-          conversationId: conversationId,
-          userId: recipientId,
-        });
         console.log('id does not exist');
       }
       resetForm();
