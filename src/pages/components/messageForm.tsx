@@ -4,16 +4,21 @@ import { useFormik } from 'formik';
 import { api } from '~/utils/api';
 import { useMutation } from '@tanstack/react-query';
 import { useSendMessage } from '../hooks/useSendMessage';
+import { NEW_MESSAGE } from '../constants';
 interface MessageFormProps {
   recipient: string | string[] | undefined;
   conversationId: string | null;
+  setSelectedConversationId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 interface Message {
   message: string;
 }
 
-const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId }) => {
+const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId , setSelectedConversationId}) => {
   const sendMessage = useSendMessage()
+ const utils = api.useContext()
+
+  const sendMessageMutation = api.message.sendMessage.useMutation({});
 
   const formik = useFormik<Message>({
     initialValues: {
@@ -21,17 +26,38 @@ const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId }) 
     },
     onSubmit: async (values: Message, { resetForm }) => {
       const recipientId = typeof recipient === 'string' ? recipient : '';
-      if (conversationId) {
-        sendMessage({  
+      if (values) {
+        sendMessageMutation.mutate({
             messageText: values.message,
-            conversationId: conversationId,
-            userId: recipientId,
-        })
+            ...(conversationId === NEW_MESSAGE
+              ? { userId: recipientId }
+              : { conversationId: conversationId }),
+          },
+          {
+            onSettled: (data, error ) => {
+              if (conversationId !== NEW_MESSAGE) {
+                utils.message.conversations.invalidate();
+                utils.message.messages.invalidate({
+                  conversationId: conversationId!,
+                });
+              }
+              if (data) {
+                setSelectedConversationId(data.id);
+              }
+              if (error) {
+                alert(error.message);
+              }
+             console.log('berhasil yok')
+            }
+          }
+          ),
+        console.log('bisa yok')
       } else {
         console.log('id does not exist');
       }
       resetForm();
     },
+      
   });
 
   return (

@@ -2,6 +2,7 @@
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef } from 'react';
 import { api } from '~/utils/api';
+import { NEW_MESSAGE } from '../constants';
 interface Message {
     id: string;
     message: string;
@@ -10,9 +11,11 @@ interface Message {
   
 interface MessageListProps {
     messages: Message[];
+    conversationId: string | null;
+    isLoading: boolean;
   }
   
-const MessageList: React.FC<MessageListProps> =  ({ messages ,}) => {
+const MessageList: React.FC<MessageListProps> =  ({ messages , conversationId, isLoading}) => {
     const { data: sessionData } = useSession();
     const sender = sessionData?.user?.id ;
  
@@ -21,6 +24,14 @@ const MessageList: React.FC<MessageListProps> =  ({ messages ,}) => {
     useEffect(() => {
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    // if ((conversationId !== NEW_MESSAGE && isLoading)) {
+    //   return (
+    //     <div className="flex h-full items-center justify-center">
+    //       <p>{isLoading ? "Loading..." : "Error"}</p>
+    //     </div>
+    //   );
+    // }
   
   return (
     <div>

@@ -29,7 +29,7 @@ const Chat: NextPage = () => {
   const router = useRouter();
  
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const messages = useGetMessages(selectedConversationId);
+  const {messages , isLoading}= useGetMessages(selectedConversationId);
   // const { id: sender } = useSession().data?.user || {};
   const { recipient } = router.query;
   const findconversation = useFindConversation(recipient)
@@ -69,7 +69,7 @@ const Chat: NextPage = () => {
          {!messages && <div> select user to start a chat</div>}
 
          <div className="  mb-30 h-[90%] overflow-y-auto ">
-          {messages && (<MessageList messages={messages} />)}
+          {messages && (<MessageList messages={messages} conversationId={selectedConversationId} isLoading={isLoading}/>)}
         </div>
             
 
@@ -78,7 +78,7 @@ const Chat: NextPage = () => {
           <div className="">
           <MessageForm
         //  onSubmit={handleSendMessage} 
-         conversationId={selectedConversationId} recipient={recipient}  />
+         conversationId={selectedConversationId} recipient={recipient} setSelectedConversationId={setSelectedConversationId}/>
         </div>
 
            ): null} 
