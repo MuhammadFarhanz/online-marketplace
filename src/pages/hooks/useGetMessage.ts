@@ -5,10 +5,10 @@ import { NEW_MESSAGE } from "../constants";
 const useGetMessages = (selectedConversationId: any) => {
   const { data: messages, refetch , isLoading} = api.message.messages.useQuery(
   {
-    conversationId: selectedConversationId
+    conversationId: selectedConversationId!
   },
   {
-    enabled: selectedConversationId !== NEW_MESSAGE,
+    enabled:selectedConversationId !== null && selectedConversationId !== NEW_MESSAGE,
   }
   );
 
