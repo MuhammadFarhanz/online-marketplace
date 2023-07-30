@@ -15,10 +15,9 @@ interface Message {
 }
 
 const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId , setSelectedConversationId}) => {
-  const sendMessage = useSendMessage()
  const utils = api.useContext()
 
-  const sendMessageMutation = api.message.sendMessage.useMutation({});
+  const sendMessageMutation = api.message.sendMessage.useMutation();
 
   const formik = useFormik<Message>({
     initialValues: {
@@ -47,7 +46,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ recipient, conversationId , s
               if (error) {
                 alert(error.message);
               }
-             console.log('berhasil yok')
+         
             }
           }
           ),

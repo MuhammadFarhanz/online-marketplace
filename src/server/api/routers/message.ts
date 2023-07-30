@@ -166,10 +166,7 @@ export const messageRouter = createTRPCRouter({
         id: conversationId
       }
      });
-    
-    //  if(message){
-    //   return message.message;
-    // }
+  // 
     });
 
     const user = await ctx.prisma.conversationUser.findFirst({

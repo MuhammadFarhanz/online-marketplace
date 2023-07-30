@@ -49,5 +49,25 @@ export const productRouter = createTRPCRouter({
     })   
    
     return product; 
+  }),
+
+  getAllProductById: protectedProcedure
+  .query(({ctx}) => {
+      return ctx.prisma.product.findMany({
+        where:{
+          authorId: ctx.session.user.id
+        },
+        select:{
+            name:true,
+            id: true,
+            description: true,
+            image:true,
+            price:true,
+            condition:true
+        }
+      })
   })
+
+
+
 });

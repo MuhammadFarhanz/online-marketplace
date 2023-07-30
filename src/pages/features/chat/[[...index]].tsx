@@ -12,10 +12,13 @@ import useFindConversation from "~/pages/hooks/useFindConversation";
 import MessageList from "~/pages/components/messageList";
 import ConversationCard from "~/pages/components/conversationCard";
 import MessageForm from "~/pages/components/messageForm";
+import { NEW_MESSAGE } from "~/pages/constants";
+import { User } from "@prisma/client";
 
 const Chat: NextPage = () => {
   const {data: conversations} = api.message.conversations.useQuery()
   const utils = api.useContext();
+
   api.message.onSendMessage.useSubscription(undefined, {
     onData: ({ conversationId }) => {
       utils.message.conversations.invalidate();
@@ -29,17 +32,15 @@ const Chat: NextPage = () => {
   const router = useRouter();
  
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const {messages , isLoading}= useGetMessages(selectedConversationId);
+  const {messages , isLoading} = useGetMessages(selectedConversationId);
   // const { id: sender } = useSession().data?.user || {};
   const { recipient } = router.query;
   const findconversation = useFindConversation(recipient)
-  const recipientId = recipient ?? '';
+  const recipientId = typeof recipient === 'string' ? recipient : '';
 
   useEffect(() => {
     if (findconversation) {
       setSelectedConversationId(findconversation);
-    }else{
-      
     }
   }, [findconversation]);
 

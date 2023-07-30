@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import AuthShowcase from "../features/sign-in";
+import { useState } from "react";
  
 export default function Navbar() {
     const { data: sessionData } = useSession();
+    const [isOpen, setIsOpen] = useState(false)
     // console.log(sessionData?.user)
 
   return (
-    <nav className="border-gray-200  bg-black font-helvetica font-bolder text-[18px]">
+    <nav className="border-gray-200 relative bg-black font-helvetica font-bolder text-[18px]">
       <div className=" mx-auto flex flex-wrap items-center justify-between p-4">
       
           <span className="self-center font-futura whitespace-nowrap text-2xl font-semibold dark:text-white">
@@ -145,16 +147,52 @@ export default function Navbar() {
                 </Link>
               </li>}
            
+          {!sessionData &&
               <li>
-               <AuthShowcase/>
-              </li>
+              <div className="flex flex-col items-center justify-center gap-4 font-helvetica ">
+              <button
+                className=" text-white no-underline transition hover:text-purple-500"
+                onClick={() => signIn()}
+              >
+                {sessionData ? "SIGN OUT" : "SIGN IN"}
+              </button>
+            </div>
+              </li>}
 
             {sessionData ? 
-              <li className=" w-10 h-10">
-              <img className='rounded-full' src={sessionData?.user?.image ?? ''} alt="User Image"/>
-
             
+            <div>
+                <li className=" w-10 h-10 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+              <img className='rounded-full' src={sessionData?.user?.image ?? ''} alt="User Image"/>            
             </li>
+
+
+            {isOpen ? 
+                   <div id="dropdownInformation" className="z-10 absolute mt-5 right-3 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-black dark:divide-gray-600">
+                   <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                     <div>{sessionData.user.name}</div>
+                     <div className="font-medium truncate">{sessionData.user.email}</div>
+                   </div>
+                   <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformationButton">
+                     <li>
+                       <Link href={'features/dashboard/products'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link>
+                     </li>
+                     <li>
+                       <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                     </li>
+                     <li>
+                       <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+                     </li>
+                   </ul>
+                   <div className="py-2">
+                     <button
+                    onClick={() => signOut()}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                        Sign out</button>
+                   </div>
+               </div>:null}
+
+             </div>
 
           : null
             }
