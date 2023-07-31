@@ -4,11 +4,11 @@ import Head from "next/head";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import Select from 'react-select';
+import Select from "react-select";
 import { cityOptions } from "~/pages/utils/cityOption";
 import { categoryOptions } from "~/pages/utils/categoryOptions";
 import { z } from "zod";
-import * as yup from 'yup';
+import * as yup from "yup";
 import { useCreateProduct } from "~/pages/hooks/useCreateProduct";
 
 interface FormValues {
@@ -26,34 +26,46 @@ const AddProduct: NextPage = () => {
   const createProduct = useCreateProduct();
 
   const validationSchema = yup.object().shape({
-    name: yup.string().required('Name is required'),
-    description: yup.string().min(10, 'Description should contain at least 10 characters').required('Description is required'),
-    price: yup.string().min(3, 'The minimum product price is IDR 100').required('Price is required'),
-    image:  yup.array().of(yup.string()).min(1, 'At least one image is required'),  
-    condition: yup.string().required('Condition is required'),
-    location: yup.string().required('Location is required'),
-    category: yup.string().required('Category is required'),
+    name: yup.string().required("Name is required"),
+    description: yup
+      .string()
+      .min(10, "Description should contain at least 10 characters")
+      .required("Description is required"),
+    price: yup
+      .string()
+      .min(3, "The minimum product price is IDR 100")
+      .required("Price is required"),
+    image: yup
+      .array()
+      .of(yup.string())
+      .min(1, "At least one image is required"),
+    condition: yup.string().required("Condition is required"),
+    location: yup.string().required("Location is required"),
+    category: yup.string().required("Category is required"),
   });
 
   const formik = useFormik<FormValues>({
     initialValues: {
       name: "",
       description: "",
-      price: '',
+      price: "",
       image: [],
-      condition: 'new',
-      location: '',
-      category: ''
+      condition: "new",
+      location: "",
+      category: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values: FormValues) => {
-      createProduct(values);
-          setShowSuccessToast(true);
+      const priceWithoutDots = values.price.replace(/\./g, ""); // Remove dots from the price
+      const convertedPrice = Number(priceWithoutDots); // Convert price field to a number
+      createProduct({ ...values, price: convertedPrice });
 
-    // Hide success message toast after 3 seconds
-    setTimeout(() => {
-      setShowSuccessToast(false);
-    }, 3000);
+      setShowSuccessToast(true);
+
+      // Hide success message toast after 3 seconds
+      setTimeout(() => {
+        setShowSuccessToast(false);
+      }, 3000);
     },
   });
 
@@ -61,7 +73,10 @@ const AddProduct: NextPage = () => {
 
   const [selectedImage, setSelectedImage] = useState<string[]>([]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>,index: number) => {
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
       const reader = new FileReader();
@@ -71,30 +86,33 @@ const AddProduct: NextPage = () => {
         setSelectedImage((previousImages) => {
           const updatedImages = [...previousImages];
           updatedImages[index] = imageString;
-          formik.setFieldValue('image', updatedImages);
+          formik.setFieldValue("image", updatedImages);
           return updatedImages;
         });
       };
-  
 
       reader.readAsDataURL(file);
     }
   };
 
   const formatPrice = (value: string): string => {
-    const formattedValue = value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const formattedValue = value
+      .replace(/\D/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     return formattedValue;
   };
 
-  const handleInputPriceChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleInputPriceChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     let inputValue = event.target.value;
-    inputValue = inputValue.replace(/\D/g, '');
+    inputValue = inputValue.replace(/\D/g, "");
 
     const priceLimit = 10000000000;
     inputValue = Math.min(Number(inputValue), priceLimit).toString();
     const formattedValue = formatPrice(inputValue);
     formik.handleChange(event);
-    formik.setFieldValue('price', formattedValue);
+    formik.setFieldValue("price", formattedValue);
   };
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -109,7 +127,7 @@ const AddProduct: NextPage = () => {
       <>
         {show && (
           <div className="fixed bottom-5 right-5 z-50">
-            <div className="bg-green-500 text-white rounded-md p-4 shadow-md">
+            <div className="rounded-md bg-green-500 p-4 text-white shadow-md">
               {message}
             </div>
           </div>
@@ -117,7 +135,7 @@ const AddProduct: NextPage = () => {
       </>
     );
   };
-  
+
   return (
     <>
       <Head>
@@ -125,22 +143,30 @@ const AddProduct: NextPage = () => {
         <meta name="description" content="Generated by create-t3-app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="max-w-4xl mx-auto container font-helvetica">
-        <form onSubmit={formik.handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-           {/* Success toast */}
-        <SuccessToast
-          message="Product created successfully!"
-          show={showSuccessToast}
-        />
+      <div className="container mx-auto max-w-4xl font-helvetica">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md"
+        >
+          {/* Success toast */}
+          <SuccessToast
+            message="Product created successfully!"
+            show={showSuccessToast}
+          />
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            <label
+              className="mb-2 block text-sm font-bold text-gray-700"
+              htmlFor="name"
+            >
               Name
             </label>
             <input
-               className={`shadow appearance-none border  rounded w-full py-2 px-3
-                text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                formik.touched.name && formik.errors.name ? 'border-red-500 border' : ''
-              }`}
+              className={`focus:shadow-outline w-full appearance-none  rounded border px-3 py-2
+                leading-tight text-gray-700 shadow focus:outline-none ${
+                  formik.touched.name && formik.errors.name
+                    ? "border border-red-500"
+                    : ""
+                }`}
               id="name"
               type="name"
               name="name"
@@ -149,21 +175,26 @@ const AddProduct: NextPage = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-           
-           {formik.touched.name && formik.errors.name && (
-              <div className="text-red-500">{formik.errors.name }</div>
+
+            {formik.touched.name && formik.errors.name && (
+              <div className="text-red-500">{formik.errors.name}</div>
             )}
-            
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+            <label
+              className="mb-2 block text-sm font-bold text-gray-700"
+              htmlFor="description"
+            >
               Description
             </label>
             <textarea
-              className={`shadow appearance-none border rounded w-full py-2 px-3
-               text-gray-700 leading-tight focus:outline-none focus:shadow-outline 
-               ${ formik.touched.description && formik.errors.description ? 'border-red-500 border' : ''
-              }`}
+              className={`focus:shadow-outline w-full appearance-none rounded border px-3 py-2
+               leading-tight text-gray-700 shadow focus:outline-none 
+               ${
+                 formik.touched.description && formik.errors.description
+                   ? "border border-red-500"
+                   : ""
+               }`}
               id="description"
               name="description"
               value={formik.values.description}
@@ -171,30 +202,37 @@ const AddProduct: NextPage = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-             {formik.touched.description && formik.errors.description && (
+            {formik.touched.description && formik.errors.description && (
               <div className="text-red-500">{formik.errors.description}</div>
             )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
+            <label
+              className="mb-2 block text-sm font-bold text-gray-700"
+              htmlFor="price"
+            >
               Price
             </label>
             <div className="flex flex-row">
-            <span className="flex items-center bg-gray-400 rounded rounded-r-none px-3 font-bold ">Rp</span>
-                <input
-                  className={`shadow appearance-none rounded w-full py-2 px-3 text-gray-700
-                  leading-tight focus:outline-none focus:shadow-outline 
-                  ${ formik.touched.price && formik.errors.price ? 'border-red-500 border' : '' }`}
-                  id="price"
-                  type="price"
-                  name="price"
-                  value={formik.values.price}
-                  placeholder="Enter price"
-                  onChange={handleInputPriceChange}
-                  onBlur={formik.handleBlur}
-                />
-                 
-            
+              <span className="flex items-center rounded rounded-r-none bg-gray-400 px-3 font-bold ">
+                Rp
+              </span>
+              <input
+                className={`focus:shadow-outline w-full appearance-none rounded px-3 py-2 leading-tight
+                  text-gray-700 shadow focus:outline-none 
+                  ${
+                    formik.touched.price && formik.errors.price
+                      ? "border border-red-500"
+                      : ""
+                  }`}
+                id="price"
+                type="price"
+                name="price"
+                value={formik.values.price}
+                placeholder="Enter price"
+                onChange={handleInputPriceChange}
+                onBlur={formik.handleBlur}
+              />
             </div>
             {formik.touched.price && formik.errors.price && (
               <div className="text-red-500">{formik.errors.price}</div>
@@ -202,42 +240,52 @@ const AddProduct: NextPage = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Image</label>
+            <label className="mb-2 block text-sm font-bold text-gray-700">
+              Image
+            </label>
             <div className="flex flex-wrap">
               {labels.map((label, index) => (
                 <label
                   key={index}
                   htmlFor={`dropzone-file-${index}`}
-                  className={`flex items-center justify-center w-24 h-24 border-2 ${
+                  className={`flex h-24 w-24 items-center justify-center border-2 ${
                     selectedImage ? "border-solid" : "border-dashed"
-                  } rounded-lg cursor-pointer mx-2 my-2 ${ formik.touched.image && formik.errors.image ? 'border-red-500 border-dashed' : '' }`}
+                  } mx-2 my-2 cursor-pointer rounded-lg ${
+                    formik.touched.image && formik.errors.image
+                      ? "border-dashed border-red-500"
+                      : ""
+                  }`}
                 >
                   {selectedImage[index] ? (
-                <img src={selectedImage[index]} alt="upload" className="object-cover w-20 h-20" />
-              ) : (
-                <svg
-                  className="w-8 h-8 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
-                </svg>
-              )}
+                    <img
+                      src={selectedImage[index]}
+                      alt="upload"
+                      className="h-20 w-20 object-cover"
+                    />
+                  ) : (
+                    <svg
+                      className="h-8 w-8 text-gray-500 dark:text-gray-400"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 20 16"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                      />
+                    </svg>
+                  )}
                   <input
                     id={`dropzone-file-${index}`}
                     type="file"
                     className="hidden"
                     accept="image/*"
                     onBlur={formik.handleBlur}
-                    onChange={(event) => handleImageChange(event,index)}
+                    onChange={(event) => handleImageChange(event, index)}
                   />
                 </label>
               ))}
@@ -245,61 +293,82 @@ const AddProduct: NextPage = () => {
             {formik.touched.image && formik.errors.image && (
               <div className="text-red-500">{formik.errors.image}</div>
             )}
-          </div> 
+          </div>
 
           <div className="mb-4">
-            <label className="text-gray-700 text-sm font-bold mb-2">Condition</label>
+            <label className="mb-2 text-sm font-bold text-gray-700">
+              Condition
+            </label>
             <div className="flex items-center">
-            <input 
-             onChange={formik.handleChange}
-            type="radio" id="condition-new" name="condition" value="new" className="form-radio"  checked={formik.values.condition === "new"}/>
-            <label className="mr-4 ml-1">New</label>
-
-            <input
-             onChange={formik.handleChange}
-             type="radio" id="condition-used" name="condition" value="used" className="form-radio" checked={formik.values.condition === "used"}/>
-            <label className=" ml-1">Used</label>
-          </div>
-          </div>
-
-         <div className="mb-4">
-         <label className="block mb-2 text-sm  text-gray-900 font-bold">Location</label>
-         <Select
-                options={cityOptions}
-                placeholder="Select a city"
-                isSearchable
-                onChange={(selectedOption) => {
-                  formik.setFieldValue('location', selectedOption?.value)
-                }}
-                value={cityOptions.find((option) => option.value === formik.values.location)} 
-                maxMenuHeight={5 * 40} 
+              <input
+                onChange={formik.handleChange}
+                type="radio"
+                id="condition-new"
+                name="condition"
+                value="new"
+                className="form-radio"
+                checked={formik.values.condition === "new"}
               />
-                {formik.touched.location && formik.errors.location && (
-              <div className="text-red-500">{formik.errors.location }</div>
-            )}
-         </div>
+              <label className="ml-1 mr-4">New</label>
 
-   
-         <div className="mb-4">
-            <label className="block mb-2 text-sm text-gray-900 font-bold">Category</label>
+              <input
+                onChange={formik.handleChange}
+                type="radio"
+                id="condition-used"
+                name="condition"
+                value="used"
+                className="form-radio"
+                checked={formik.values.condition === "used"}
+              />
+              <label className=" ml-1">Used</label>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="mb-2 block text-sm  font-bold text-gray-900">
+              Location
+            </label>
+            <Select
+              options={cityOptions}
+              placeholder="Select a city"
+              isSearchable
+              onChange={(selectedOption) => {
+                formik.setFieldValue("location", selectedOption?.value);
+              }}
+              value={cityOptions.find(
+                (option) => option.value === formik.values.location
+              )}
+              maxMenuHeight={5 * 40}
+            />
+            {formik.touched.location && formik.errors.location && (
+              <div className="text-red-500">{formik.errors.location}</div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-bold text-gray-900">
+              Category
+            </label>
             <Select
               options={categoryOptions}
               placeholder="Select a category"
               isSearchable
-              maxMenuHeight={5 * 40} 
+              maxMenuHeight={5 * 40}
               onChange={(selectedOption) => {
-                formik.setFieldValue('category', selectedOption?.value || '');
+                formik.setFieldValue("category", selectedOption?.value || "");
               }}
-              value={categoryOptions.find((option) => option.value === formik.values.category)}
+              value={categoryOptions.find(
+                (option) => option.value === formik.values.category
+              )}
             />
-                  {formik.touched.category && formik.errors.category && (
-              <div className="text-red-500">{formik.errors.category }</div>
+            {formik.touched.category && formik.errors.category && (
+              <div className="text-red-500">{formik.errors.category}</div>
             )}
           </div>
 
           <div className="flex items-center justify-end">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
               type="submit"
             >
               Add Product
