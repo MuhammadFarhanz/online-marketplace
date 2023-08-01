@@ -111,7 +111,7 @@ model Product {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     name        String
-    price       String
+    price       Int
     description String
     authorId    String
     condition   String
