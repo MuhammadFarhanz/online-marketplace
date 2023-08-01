@@ -44,11 +44,3 @@ DATABASE_URL="file:./db.sqlite"
 # openssl rand -base64 32
 
 # https://next-auth.js.org/configuration/options#secret
-
-NEXTAUTH_SECRET="qk1gkmFZ0VNUeFEjQuCggUEU469uqznLgANhwH7NauI="
-NEXTAUTH_URL="http://localhost:3000"
-
-# Next Auth Google Provider
-
-GOOGLE_CLIENT_ID="689422055272-5ppn27fhhj6rjffm8ct4a91v8qrn4qo6.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="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"
