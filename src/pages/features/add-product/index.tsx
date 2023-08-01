@@ -10,41 +10,20 @@ import { categoryOptions } from "~/pages/utils/categoryOptions";
 import { z } from "zod";
 import * as yup from "yup";
 import { useCreateProduct } from "~/pages/hooks/useCreateProduct";
-
-interface FormValues {
-  name: string;
-  description: string;
-  price: string;
-  image: string[];
-  condition: string;
-  location: string;
-  category: string;
-}
+import { ProductFormValues, productValidationSchema } from "./formUtils";
+import SuccessToast from "./sucessToast";
+import { useImageUpload } from "~/pages/hooks/useImageUpload";
+import { usePriceInput } from "~/pages/hooks/usePriceInput";
 
 const AddProduct: NextPage = () => {
   const router = useRouter();
   const createProduct = useCreateProduct();
 
-  const validationSchema = yup.object().shape({
-    name: yup.string().required("Name is required"),
-    description: yup
-      .string()
-      .min(10, "Description should contain at least 10 characters")
-      .required("Description is required"),
-    price: yup
-      .string()
-      .min(3, "The minimum product price is IDR 100")
-      .required("Price is required"),
-    image: yup
-      .array()
-      .of(yup.string())
-      .min(1, "At least one image is required"),
-    condition: yup.string().required("Condition is required"),
-    location: yup.string().required("Location is required"),
-    category: yup.string().required("Category is required"),
-  });
+  const { formatPrice } = usePriceInput();
 
-  const formik = useFormik<FormValues>({
+  const validationSchema = productValidationSchema;
+
+  const formik = useFormik<ProductFormValues>({
     initialValues: {
       name: "",
       description: "",
@@ -55,52 +34,24 @@ const AddProduct: NextPage = () => {
       category: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values: FormValues) => {
+    onSubmit: (values: ProductFormValues, { resetForm }) => {
+      console.log(values.image);
       const priceWithoutDots = values.price.replace(/\./g, ""); // Remove dots from the price
       const convertedPrice = Number(priceWithoutDots); // Convert price field to a number
+
       createProduct({ ...values, price: convertedPrice });
 
       setShowSuccessToast(true);
-
+      resetForm();
       // Hide success message toast after 3 seconds
       setTimeout(() => {
         setShowSuccessToast(false);
       }, 3000);
     },
   });
+  const { selectedImage, handleImageChange } = useImageUpload({ formik });
 
   const labels = [1, 2, 3, 4, 5];
-
-  const [selectedImage, setSelectedImage] = useState<string[]>([]);
-
-  const handleImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    if (event.currentTarget.files && event.currentTarget.files[0]) {
-      const file = event.currentTarget.files[0];
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        const imageString = reader.result as string;
-        setSelectedImage((previousImages) => {
-          const updatedImages = [...previousImages];
-          updatedImages[index] = imageString;
-          formik.setFieldValue("image", updatedImages);
-          return updatedImages;
-        });
-      };
-
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const formatPrice = (value: string): string => {
-    const formattedValue = value
-      .replace(/\D/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return formattedValue;
-  };
 
   const handleInputPriceChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -116,25 +67,6 @@ const AddProduct: NextPage = () => {
   };
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-
-  interface SuccessToastProps {
-    message: string;
-    show: boolean;
-  }
-
-  const SuccessToast: React.FC<SuccessToastProps> = ({ message, show }) => {
-    return (
-      <>
-        {show && (
-          <div className="fixed bottom-5 right-5 z-50">
-            <div className="rounded-md bg-green-500 p-4 text-white shadow-md">
-              {message}
-            </div>
-          </div>
-        )}
-      </>
-    );
-  };
 
   return (
     <>
@@ -249,7 +181,7 @@ const AddProduct: NextPage = () => {
                   key={index}
                   htmlFor={`dropzone-file-${index}`}
                   className={`flex h-24 w-24 items-center justify-center border-2 ${
-                    selectedImage ? "border-solid" : "border-dashed"
+                    selectedImage[index] ? "border-solid" : "border-dashed"
                   } mx-2 my-2 cursor-pointer rounded-lg ${
                     formik.touched.image && formik.errors.image
                       ? "border-dashed border-red-500"
