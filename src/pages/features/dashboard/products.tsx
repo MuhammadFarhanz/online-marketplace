@@ -3,15 +3,20 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useGetProductById } from "~/pages/hooks/useGetProductById";
+// import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
-import EditProductModal from "./editProductForm";
+import EditProductModal from "./editProductModal";
 import DeleteIcon from "~/pages/assets/deleteIcon";
+import { useDeleteProduct } from "~/pages/hooks/useDeleteProduct";
 
 const Dasboard: NextPage = () => {
-  const { data: products } = api.product.getAllProductById.useQuery();
+  const { data: products, refetch } = api.product.getAllProductById.useQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(products);
+  const deleteProduct = useDeleteProduct();
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
 
   const handleEditProduct = (products: any) => {
     setSelectedProduct(products);
@@ -20,6 +25,49 @@ const Dasboard: NextPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleClick = async () => {
+    // console.log(id);
+    try {
+      await deleteProduct(selectedProductId);
+      setIsToastOpen(false);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOpenToast = (id: any) => {
+    setSelectedProductId(id);
+    setIsToastOpen(true);
+  };
+
+  const [isToastOpen, setIsToastOpen] = useState(false);
+
+  const Toast = ({ productId }: any) => {
+    console.log(productId);
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="rounded-lg bg-white p-4">
+          <p className="mb-2 text-lg font-bold text-black">Are you sure?</p>
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => handleClick()}
+              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => setIsToastOpen(false)}
+              className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -63,11 +111,14 @@ const Dasboard: NextPage = () => {
                 <div className=" w-1/5"></div>
               </div>
 
+              {isToastOpen && <Toast productId={selectedProductId} />}
+
               {products?.map((product) => {
                 return (
                   <div className="flex flex-col">
                     <div className=" flex flex-row items-center justify-between border-b bg-black p-4  text-white ">
                       <>
+                        {/* {isToastOpen && <Toast productId={product.id} />} */}
                         <div className=" flex w-1/5 flex-row truncate ">
                           <img
                             src={product.image[0]?.url}
@@ -95,7 +146,7 @@ const Dasboard: NextPage = () => {
 
                         <div className="flex w-1/5 flex-row justify-between">
                           <button
-                            onClick={() => handleEditProduct(selectedProduct)}
+                            onClick={() => handleEditProduct(product)}
                             type="button"
                             className="mr-2 flex flex-row items-center rounded-lg bg-[#F8F8F8] px-5 py-2.5 font-medium text-black  "
                           >
@@ -103,7 +154,9 @@ const Dasboard: NextPage = () => {
                           </button>
                           <button
                             type="button"
-                            className="mr-2 flex flex-row items-center rounded-lg  bg-[#F8F8F8] px-5 py-2.5 font-medium text-black  "
+                            className="mr-2 flex flex-row items-center rounded-lg  bg-[#F8F8F8] px-5 py-2.5 font-medium text-black"
+                            // onClick={() => handleClick(product.id)}
+                            onClick={() => handleOpenToast(product.id)}
                           >
                             <DeleteIcon />
                             delete item
@@ -114,8 +167,15 @@ const Dasboard: NextPage = () => {
                   </div>
                 );
               })}
+
+              {isModalOpen && (
+                <EditProductModal
+                  onClose={handleCloseModal}
+                  product={selectedProduct}
+                  refetch={refetch}
+                />
+              )}
             </div>
-            {isModalOpen && <EditProductModal onClose={handleCloseModal} />}
           </main>
         </div>
       </main>
