@@ -1,9 +1,5 @@
-// MessageForm.tsx
-import React, { useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import { api } from "~/utils/api";
-import { useMutation } from "@tanstack/react-query";
-import { useSendMessage } from "../hooks/useSendMessage";
 import { NEW_MESSAGE } from "../constants";
 interface MessageFormProps {
   recipient: string | string[] | undefined;
@@ -16,24 +12,38 @@ interface Message {
   message: string;
 }
 
+/**
+ * Represents the form for sending messages.
+ *
+ * This component provides a user interface for composing and sending messages.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string|string[]|undefined} props.recipient - The recipient of the message.
+ * @param {string|null} props.currentConversationId - The ID of the current conversation.
+ * @param {React.Dispatch<React.SetStateAction<string|null>>} props.setSelectedConversationId - A function to set the selected conversation ID.
+ * @returns {JSX.Element} The JSX element representing the message form.
+ */
+
 const MessageForm: React.FC<MessageFormProps> = ({
   recipient,
   currentConversationId,
   setSelectedConversationId,
 }) => {
+  // Access the API context to retrieve utilities
   const utils = api.useContext();
-  console.log(recipient, "ini recipient");
 
+  // Initialize the send message mutation using the API
   const sendMessageMutation = api.message.sendMessage.useMutation();
 
+  // Use Formik for managing form state and handling form submissions
   const formik = useFormik<Message>({
     initialValues: {
       message: "",
     },
     onSubmit: async (values: Message, { resetForm }) => {
       const recipientId = typeof recipient === "string" ? recipient : "";
-      console.log(recipientId, "ini coyy");
-      if (values) {
+      if (values.message !== "") {
         sendMessageMutation.mutate(
           {
             messageText: values.message,
@@ -43,6 +53,7 @@ const MessageForm: React.FC<MessageFormProps> = ({
           },
           {
             onSettled: (data, error) => {
+              // Invalidate conversation and messages caches
               if (currentConversationId !== NEW_MESSAGE) {
                 utils.message.conversations.invalidate();
                 utils.message.messages.invalidate({
@@ -57,10 +68,9 @@ const MessageForm: React.FC<MessageFormProps> = ({
               }
             },
           }
-        ),
-          console.log("bisa yok");
+        );
       } else {
-        console.log("id does not exist");
+        console.log("Message cannot be empty");
       }
       resetForm();
     },
@@ -69,34 +79,29 @@ const MessageForm: React.FC<MessageFormProps> = ({
   return (
     <form
       onSubmit={formik.handleSubmit}
-      className=" absolute bottom-0  h-[10%] w-full  border-t-2 border-black px-8 pb-6 pt-6 shadow-md"
+      className=" absolute bottom-0 flex h-[10%] w-full items-center border-t border-black   px-8 pb-6 pt-6 shadow-md"
     >
-      <div className="flex">
+      <div className="flex  w-full  ">
         <input
-          className="focus:shadow-outline w-full appearance-none rounded-full border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+          className="w-[95%] appearance-none rounded-md border border-black bg-[#E9E9E9] px-3 py-2 leading-tight placeholder:text-black focus:outline-none"
           id="message"
           name="message"
           placeholder="Enter message"
           value={formik.values.message}
           onChange={formik.handleChange}
         />
+
         <button
           type="submit"
-          className="focus:shadow-outline ml-2 rounded-full bg-blue-500 px-2 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+          className="focus:shadow-outline ml-2 flex w-[5%] items-center justify-center rounded-md border border-black px-2 py-2 font-bold"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
+            fill="currentColor"
             className="h-6 w-6"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-            />
+            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
           </svg>
         </button>
       </div>

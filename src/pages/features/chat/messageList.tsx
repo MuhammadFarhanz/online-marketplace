@@ -1,8 +1,6 @@
 // MessageList.tsx
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef } from "react";
-import { api } from "~/utils/api";
-import { NEW_MESSAGE } from "../../constants";
 interface Message {
   id: string;
   message: string;
@@ -15,6 +13,18 @@ interface MessageListProps {
   isLoading: boolean;
 }
 
+/**
+ * Represent a list of message in a conversation
+ *
+ * This component is render the list of messages in a conversation thread, with proper styling based on the sender
+ * @component
+ * @param {Object} props - The Component Props
+ * @param {Message[]} props.messages - An array of message objects.
+ * @param {string|null} props.conversationId - The ID of the current conversation.
+ * @param {boolean} props.isLoading - A flag indicating whether messages are still loading.
+ * @returns {JSX.Element} - The jsx element representing the list of message.
+ */
+
 const MessageList: React.FC<MessageListProps> = ({
   messages,
   conversationId,
@@ -25,17 +35,10 @@ const MessageList: React.FC<MessageListProps> = ({
 
   const scrollRef = useRef<HTMLLIElement>(null);
 
+  // Scroll the latest message whenever the messages are loaded
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // if ((conversationId !== NEW_MESSAGE && isLoading)) {
-  //   return (
-  //     <div className="flex h-full items-center justify-center">
-  //       <p>{isLoading ? "Loading..." : "Error"}</p>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div>
@@ -56,7 +59,7 @@ const MessageList: React.FC<MessageListProps> = ({
                 className={`inline-block rounded-lg px-4 py-2  ${
                   message.userId !== sender
                     ? "rounded-bl-none bg-gray-300 text-gray-600"
-                    : "rounded-br-none bg-blue-600 text-white"
+                    : "rounded-br-none bg-black text-white"
                 }`}
               >
                 {message.message}
@@ -65,7 +68,7 @@ const MessageList: React.FC<MessageListProps> = ({
           </div>
         </div>
       ))}
-      <li ref={scrollRef} className="h-2 bg-black"></li>
+      <li ref={scrollRef} className="h-1 list-none"></li>
     </div>
   );
 };
