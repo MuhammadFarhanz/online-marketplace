@@ -2,67 +2,21 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import AuthShowcase from "../features/sign-in";
 import { useState } from "react";
- 
+import MessageIcon from "./SVGComponents/messageIcon";
+import UserIcon from "./SVGComponents/userIcon";
+import CartIcon from "./SVGComponents/cartIcon";
+import SearchInput from "./searchInput";
+import NavbarLinks from "./NavbarLinks";
+
 export default function Navbar() {
-    const { data: sessionData } = useSession();
-    const [isOpen, setIsOpen] = useState(false)
-    // console.log(sessionData?.user)
+  const { data: sessionData } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
+  // console.log(sessionData?.user)
 
   return (
-    <nav className="border-gray-200 relative bg-black font-helvetica font-bolder text-[18px]">
-      <div className=" mx-auto flex flex-wrap items-center justify-between p-4">
-      
-          <span className="self-center font-futura whitespace-nowrap text-2xl font-semibold dark:text-white">
-            MARKETPLACE
-          </span>
-        
-        <div className="flex md:order-2">
-          {/* <button
-            type="button"
-            data-collapse-toggle="navbar-search"
-            aria-controls="navbar-search"
-            aria-expanded="false"
-            className="mr-1 rounded-lg p-2.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700 md:hidden"
-          >
-            <svg
-              className="h-5 w-5"
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-            <span className="sr-only">Search</span>
-          </button>
-          <div className="relative hidden md:block">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg
-                className="h-5 w-5 text-gray-500"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-              <span className="sr-only">Search icon</span>
-            </div>
-            <input
-              type="text"
-              id="search-navbar"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              placeholder="Search..."
-            />
-          </div> */}
+    <nav className="font-bolder mt-2 w-full font-mono">
+      <div className="mx-auto flex max-w-[98%] rounded-lg border border-black bg-slate-300 p-3">
+        <div className="w-full">
           <button
             data-collapse-toggle="navbar-search"
             type="button"
@@ -86,10 +40,19 @@ export default function Navbar() {
             </svg>
           </button>
           <div
-            className="ml-4 hidden w-full items-center justify-between md:order-1 md:flex md:w-auto"
+            className="flex w-full flex-row items-center justify-between  "
             id="navbar-search"
           >
-            <div className="relative mt-3 md:hidden">
+            <span className="self-center whitespace-nowrap  font-mono text-2xl font-semibold dark:text-black">
+              <Link href="/" aria-current="page">
+                MARKET
+              </Link>
+            </span>
+
+            <div className="mx-auto ml-10 mr-10 flex-grow rounded-md border border-black">
+              <SearchInput />
+            </div>
+            {/* <div className="relative mt-3 md:hidden">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg
                   className="h-5 w-5 text-gray-500"
@@ -108,101 +71,18 @@ export default function Navbar() {
               <input
                 type="text"
                 id="search-navbar"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700  dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 placeholder="Search..."
               />
-            </div>
-            <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium
-             dark:border-gray-700 dark:bg-gray-800 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:p-0
-              md:dark:bg-black">
-              <li>
-                <Link
-                  href="/"
-                  className="block rounded py-2 pl-3 pr-4 text-white 
-                  md:bg-transparent md:p-0 hover:text-purple-500 "
-                  aria-current="page"
-                >
-                 HOME
-                </Link>
-              </li>
-                 
-              { sessionData &&   
-              <li>
-              <Link
-                href="/features/chat"
-                className="block rounded py-2 pl-3 pr-4 text-white md:bg-transparent md:p-0 hover:text-purple-500 "
-                aria-current="page"
-              >
-                CHAT
-              </Link>
-            </li>
-              }
-              { sessionData &&   
-              <li>
-                <Link
-                  href="/features/add-product"
-                  // as={'/add-product'}
-                  className="block rounded hover:text-purple-500 py-2 pl-3 pr-4 text-white  md:p-0" >
-                ADD PRODUCT
-                </Link>
-              </li>}
-           
-          {!sessionData &&
-              <li>
-              <div className="flex flex-col items-center justify-center gap-4 font-helvetica ">
-              <button
-                className=" text-white no-underline transition hover:text-purple-500"
-                onClick={() => signIn()}
-              >
-                {sessionData ? "SIGN OUT" : "SIGN IN"}
-              </button>
-            </div>
-              </li>}
-
-            {sessionData ? 
-            
-            <div>
-                <li className=" w-10 h-10 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-              <img className='rounded-full' src={sessionData?.user?.image ?? ''} alt="User Image"/>            
-            </li>
-
-
-            {isOpen ? 
-                   <div id="dropdownInformation" className="z-10 absolute mt-5 right-3 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-black dark:divide-gray-600">
-                   <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                     <div>{sessionData.user.name}</div>
-                     <div className="font-medium truncate">{sessionData.user.email}</div>
-                   </div>
-                   <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformationButton">
-                     <li>
-                       <Link href={'features/dashboard/products'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link>
-                     </li>
-                     <li>
-                       <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                     </li>
-                     <li>
-                       <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                     </li>
-                   </ul>
-                   <div className="py-2">
-                     <button
-                    onClick={() => signOut()}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                        Sign out</button>
-                   </div>
-               </div>:null}
-
-             </div>
-
-          : null
-            }
-
-    
-            </ul>
+            </div> */}
+            <NavbarLinks
+              sessionData={sessionData}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
           </div>
         </div>
       </div>
     </nav>
   );
 }
-
