@@ -3,10 +3,10 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
 } from "~/server/api/trpc";
 
 export const messageRouter = createTRPCRouter({
+    // Fetch conversations for the authenticated user
   conversations: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.conversationUser.findMany({
       where: {
@@ -22,8 +22,6 @@ export const messageRouter = createTRPCRouter({
                     id: true,
                     name: true,
                     image: true,
-                    // username: true,
-                    message: true,
                   },
                 },
               },
@@ -39,7 +37,7 @@ export const messageRouter = createTRPCRouter({
       },
     });
   }),
-
+// Find a conversation between two users
   findConversation: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input: { userId }, ctx }) => {
@@ -65,7 +63,7 @@ export const messageRouter = createTRPCRouter({
         ? conversationUser[0]?.conversationId
         : null;
     }),
-
+  // Fetch messages for a specific conversation
   messages: protectedProcedure
     .input(z.object({ conversationId: z.string() }))
     .query(async ({ input: { conversationId }, ctx }) => {
@@ -84,9 +82,10 @@ export const messageRouter = createTRPCRouter({
         orderBy: {
           id: "asc",
         },
+
       });
     }),
-
+  // Send a new message to a conversation
   sendMessage: protectedProcedure
     .input(
       z.object({
@@ -139,8 +138,8 @@ export const messageRouter = createTRPCRouter({
         });
       }
 
-    await ctx.prisma.$transaction( async (trx) => {
-      const [message] = await Promise.all([
+   await ctx.prisma.$transaction( async (trx) => {
+    const [message] = await Promise.all([
      trx.message.create({
         data: {
           message: messageText,
@@ -166,7 +165,7 @@ export const messageRouter = createTRPCRouter({
         id: conversationId
       }
      });
-  // 
+
     });
 
     const user = await ctx.prisma.conversationUser.findFirst({
@@ -183,7 +182,7 @@ export const messageRouter = createTRPCRouter({
       ctx.ee.emit('sendMessage', {conversationId, userId: user!.userId})
     }),
 
-
+  // Subscribe to real-time messages being sent
     onSendMessage: protectedProcedure.subscription(({ ctx }) => {
       return observable<{conversationId: string}>((emit) => {
         const onSendMessage = (data: { conversationId: string, userId: string}) => {

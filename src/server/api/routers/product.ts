@@ -70,8 +70,15 @@ export const productRouter = createTRPCRouter({
   }),
 
   update: protectedProcedure
-  .input(z.object({id: z.string(), newProductData: z.object({name: z.string(), description: z.string(), price: z.number(), category: z.string(), location: z.string()})}))
+  .input(z.object({id: z.string(), newProductData: z.object({name: z.string(), description: z.string(), price: z.number(), category: z.string(), location: z.string(),image: z.array(z.string(),)})}))
   .mutation( async ({input,ctx}) => {
+    await ctx.prisma.image.deleteMany({
+      where: { productId: input.id }
+    });
+
+    // Create image objects for the new images
+    const images = input.newProductData.image.map(imageUrl => ({ url: imageUrl }));
+
     const product = await ctx.prisma.product.update({
       where:{
         id: input.id,
@@ -82,14 +89,20 @@ export const productRouter = createTRPCRouter({
         price: input.newProductData.price,
         category: input.newProductData.category,
         location: input.newProductData.location,
+        image: {
+          create: images,
+        },
+      },
+      include: {
+        image:true
       }
     })
+    return product
   }),
 
   delete: protectedProcedure
   .input(z.object({id: z.string()}))
   .mutation( async ({ ctx , input}) => {
-    console.log(input.id,'hhahah')
     const product = await ctx.prisma.product.delete({
       where: {
         id: input.id
