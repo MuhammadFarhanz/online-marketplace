@@ -14,8 +14,9 @@ interface Props {
   refetch: () => void;
 }
 
+// main problem its still not be able to updating indexing image , not fixed yet guys , no shit u idiot
+
 const EditProductModal: React.FC<Props> = ({ onClose, product, refetch }) => {
-  // console.log("Product Object:", product.image[0].url);
   const updateProduct = useUpdateProduct();
 
   const formik = useFormik({
@@ -26,14 +27,15 @@ const EditProductModal: React.FC<Props> = ({ onClose, product, refetch }) => {
       category: product.category,
       location: product.location,
       description: product.description,
-      image: product.image,
+      image: product.image.map((img: any) => img.url),
       condition: "new",
     },
+    validateOnChange: false,
     validationSchema: productValidationSchema,
     onSubmit: async (values) => {
       const { id, ...productData } = values;
       // console.log(typeof productData.price, "pie iki");
-
+      formik.setFieldValue("image", selectedImage);
       try {
         await updateProduct(id, {
           name: productData.name,
@@ -41,7 +43,7 @@ const EditProductModal: React.FC<Props> = ({ onClose, product, refetch }) => {
           price: productData.price,
           category: productData.category,
           location: productData.location,
-          image: productData.image,
+          image: selectedImage,
         });
         onClose();
         refetch();
@@ -64,14 +66,8 @@ const EditProductModal: React.FC<Props> = ({ onClose, product, refetch }) => {
   const labels = [1, 2, 3, 4, 5];
 
   useEffect(() => {
-    setSelectedImage(formik.values.image.map((img: any) => img.url));
+    setSelectedImage(formik.values.image);
   }, []);
-
-  useEffect(() => {
-    console.log("rerender");
-  }, []);
-
-  console.log(selectedImage, "ini selectedImage bro ");
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
@@ -226,31 +222,34 @@ const EditProductModal: React.FC<Props> = ({ onClose, product, refetch }) => {
                       </label>
                     </>
                   ) : (
-                    <svg
-                      className="h-8 w-8 text-gray-500 dark:text-gray-400"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 16"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    <>
+                      <svg
+                        className="h-8 w-8 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        />
+                      </svg>
+
+                      <input
+                        id={`dropzone-file-${index}`}
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        // value={formik.values.image}
+                        onBlur={formik.handleBlur}
+                        onChange={(event) => handleImageChange(event, index)}
                       />
-                    </svg>
+                    </>
                   )}
-                  <input
-                    id={`dropzone-file-${index}`}
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    // value={formik.values.image}
-                    onBlur={formik.handleBlur}
-                    onChange={(event) => handleImageChange(event, index)}
-                  />
                 </label>
               ))}
             </div>
