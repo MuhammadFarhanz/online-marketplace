@@ -2,6 +2,7 @@
 import * as yup from "yup";
 
 export interface ProductFormValues {
+    id: string | undefined ;
     name: string;
     description: string;
     price: string;

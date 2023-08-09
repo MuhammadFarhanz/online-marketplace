@@ -11,13 +11,18 @@ import { useCreateProduct } from "~/pages/hooks/useCreateProduct";
 import { ProductFormValues, productValidationSchema } from "./formUtils";
 import SuccessToast from "./sucessToast";
 import { useImageUpload } from "~/pages/hooks/useImageUpload";
-import { usePriceInput } from "~/pages/hooks/usePriceInput";
+import TextInput from "./textInput";
+import FormField from "./formField";
+import TextAreaInput from "./textAreaInput";
+import ImageUpload from "./ImageUpload";
+import RadioButtonGroup from "./radioButtonGroup";
+import PriceInput from "./priceInput";
+import { useFormatPrice } from "~/pages/hooks/useFormatPrice";
+import { usePriceInput } from "~/pages/hooks/useInputPrice";
 
 const AddProduct: NextPage = () => {
   const router = useRouter();
   const createProduct = useCreateProduct();
-
-  const { formatPrice } = usePriceInput();
 
   const validationSchema = productValidationSchema;
 
@@ -58,20 +63,7 @@ const AddProduct: NextPage = () => {
     setSelectedImage,
   } = useImageUpload({ formik });
 
-  const labels = [1, 2, 3, 4, 5];
-
-  const handleInputPriceChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    let inputValue = event.target.value;
-    inputValue = inputValue.replace(/\D/g, "");
-
-    const priceLimit = 10000000000;
-    inputValue = Math.min(Number(inputValue), priceLimit).toString();
-    const formattedValue = formatPrice(inputValue);
-    formik.handleChange(event);
-    formik.setFieldValue("price", formattedValue);
-  };
+  const { formattedPrice, handleInputPriceChange } = usePriceInput();
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -85,209 +77,57 @@ const AddProduct: NextPage = () => {
       <div className="m-2 mx-auto w-full max-w-6xl rounded border border-black p-6 font-helvetica">
         <div className=" h-10 w-full  text-xl font-bold">Add Product</div>
         <form onSubmit={formik.handleSubmit} className=" h-auto  bg-white ">
-          {/* Success toast */}
           <SuccessToast
             message="Product created successfully!"
             show={showSuccessToast}
           />
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm font-bold text-gray-700"
-              htmlFor="name"
-            >
-              Name
-            </label>
-            <input
-              className={`focus:shadow-outline w-full appearance-none  rounded border px-3 py-2
-                leading-tight text-gray-700 shadow focus:outline-none ${
-                  formik.touched.name && formik.errors.name
-                    ? "border border-red-500"
-                    : ""
-                }`}
-              id="name"
-              type="name"
-              name="name"
+          <FormField label="Name">
+            <TextInput
+              field={formik.getFieldProps("name")}
               placeholder="Enter name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              form={formik}
             />
-
             {formik.touched.name && formik.errors.name && (
               <div className="text-red-500">{formik.errors.name}</div>
             )}
-          </div>
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm font-bold text-gray-700"
-              htmlFor="description"
-            >
-              Description
-            </label>
-            <textarea
-              className={`focus:shadow-outline h-32 w-full appearance-none rounded border px-3
-               py-2 leading-tight text-gray-700 shadow focus:outline-none
-               ${
-                 formik.touched.description && formik.errors.description
-                   ? "border border-red-500"
-                   : ""
-               }`}
-              id="description"
-              name="description"
-              value={formik.values.description}
+          </FormField>
+          <FormField label="Description">
+            <TextAreaInput
+              field={formik.getFieldProps("description")}
               placeholder="Description"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              form={formik}
             />
             {formik.touched.description && formik.errors.description && (
               <div className="text-red-500">{formik.errors.description}</div>
             )}
-          </div>
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm font-bold text-gray-700"
-              htmlFor="price"
-            >
-              Price
-            </label>
-            <div className="flex flex-row">
-              <span className="flex items-center rounded rounded-r-none bg-gray-400 px-3 font-bold ">
-                Rp
-              </span>
-              <input
-                className={`focus:shadow-outline w-full appearance-none rounded px-3 py-2 leading-tight
-                  text-gray-700 shadow focus:outline-none 
-                  ${
-                    formik.touched.price && formik.errors.price
-                      ? "border border-red-500"
-                      : ""
-                  }`}
-                id="price"
-                type="price"
-                name="price"
-                value={formik.values.price}
-                placeholder="Enter price"
-                onChange={handleInputPriceChange}
-                onBlur={formik.handleBlur}
-              />
-            </div>
-            {formik.touched.price && formik.errors.price && (
-              <div className="text-red-500">{formik.errors.price}</div>
-            )}
-          </div>
+          </FormField>
 
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-bold text-gray-700">
-              Image
-            </label>
-            <div className="flex flex-wrap">
-              {labels.map((label, index) => (
-                <label
-                  key={index}
-                  htmlFor={`dropzone-file-${index}`}
-                  className={`relative flex h-32 w-32 items-center justify-center border-2 ${
-                    selectedImage[index] ? "border-solid" : "border-dashed"
-                  } mx-2 my-2 cursor-pointer rounded-lg ${
-                    formik.touched.image && formik.errors.image
-                      ? "border-dashed border-red-500"
-                      : ""
-                  }`}
-                >
-                  {selectedImage[index] ? (
-                    <>
-                      <label
-                        htmlFor={`dropzone-file-${index}`}
-                        className="mx-2 my-4 flex h-28 w-28 cursor-pointer items-center justify-center rounded-lg border-2 border-solid "
-                      >
-                        <img
-                          src={selectedImage[index]}
-                          alt="upload"
-                          className="h-28 w-28 object-cover"
-                        />
-                        <input
-                          id={`dropzone-file-${index}`}
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onBlur={formik.handleBlur}
-                          onChange={(event) => handleImageChange(event, index)}
-                        />
+          <FormField label="Price">
+            <PriceInput
+              formik={formik}
+              handleInputPriceChange={handleInputPriceChange}
+              formattedPrice={formattedPrice}
+            />
+          </FormField>
 
-                        <button
-                          className="absolute -right-4 -top-4 w-7 rounded-full bg-gray-300 p-1 text-sm text-white"
-                          onClick={() => handleImageDelete(index)}
-                        >
-                          X
-                        </button>
-                      </label>
-                    </>
-                  ) : (
-                    <svg
-                      className="h-8 w-8 text-gray-500 dark:text-gray-400"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 16"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                      />
-                    </svg>
-                  )}
-                  <input
-                    id={`dropzone-file-${index}`}
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    // value={formik.values.image}
-                    onBlur={formik.handleBlur}
-                    onChange={(event) => handleImageChange(event, index)}
-                  />
-                </label>
-              ))}
-            </div>
-            {formik.touched.image && formik.errors.image && (
-              <div className="text-red-500">{formik.errors.image}</div>
-            )}
-          </div>
+          <ImageUpload
+            selectedImage={selectedImage}
+            handleImageChange={handleImageChange}
+            handleImageDelete={handleImageDelete}
+            formik={formik}
+          />
 
-          <div className="mb-4">
-            <label className="mb-2 text-sm font-bold text-gray-700">
-              Condition
-            </label>
-            <div className="flex items-center">
-              <input
-                onChange={formik.handleChange}
-                type="radio"
-                id="condition-new"
-                name="condition"
-                value="new"
-                className="form-radio"
-                checked={formik.values.condition === "new"}
-              />
-              <label className="ml-1 mr-4">New</label>
+          <FormField label="Condition">
+            <RadioButtonGroup
+              field={formik.getFieldProps("condition")}
+              options={[
+                { label: "New", value: "new" },
+                { label: "Used", value: "used" },
+              ]}
+            />
+          </FormField>
 
-              <input
-                onChange={formik.handleChange}
-                type="radio"
-                id="condition-used"
-                name="condition"
-                value="used"
-                className="form-radio"
-                checked={formik.values.condition === "used"}
-              />
-              <label className=" ml-1">Used</label>
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label className="mb-2 block text-sm  font-bold text-gray-900">
-              Location
-            </label>
+          <FormField label="Location">
             <Select
               options={cityOptions}
               placeholder="Select a city"
@@ -303,12 +143,9 @@ const AddProduct: NextPage = () => {
             {formik.touched.location && formik.errors.location && (
               <div className="text-red-500">{formik.errors.location}</div>
             )}
-          </div>
+          </FormField>
 
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-bold text-gray-900">
-              Category
-            </label>
+          <FormField label="Category">
             <Select
               options={categoryOptions}
               placeholder="Select a category"
@@ -324,7 +161,7 @@ const AddProduct: NextPage = () => {
             {formik.touched.category && formik.errors.category && (
               <div className="text-red-500">{formik.errors.category}</div>
             )}
-          </div>
+          </FormField>
 
           <div className="flex items-center justify-end">
             <button
