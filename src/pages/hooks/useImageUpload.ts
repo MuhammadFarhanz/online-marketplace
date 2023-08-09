@@ -1,6 +1,6 @@
 // hooks/useImageUpload.ts
-import { FormikHelpers, FormikProps } from "formik";
-import { useEffect, useState } from "react";
+import { FormikProps } from "formik";
+import { useState } from "react";
 import { ProductFormValues } from "../features/add-product/formUtils";
 
 interface UseImageUploadProps {
@@ -14,6 +14,7 @@ export const useImageUpload = ({ formik }: UseImageUploadProps) => {
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
+
     if (event.currentTarget.files && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
       const reader = new FileReader();
@@ -23,10 +24,12 @@ export const useImageUpload = ({ formik }: UseImageUploadProps) => {
         setSelectedImage((previousImages) => {
           const updatedImages = [...previousImages];
           updatedImages[index] = imageString;
-          formik.setFieldValue("image", updatedImages);
+          
+          formik.setFieldValue('image',updatedImages)
+
           return updatedImages;
         });
-        // formik.setFieldValue("image", selectedImage);
+
       };
       
       reader.readAsDataURL(file);
@@ -38,6 +41,7 @@ export const useImageUpload = ({ formik }: UseImageUploadProps) => {
       const updatedImages = [...previousImages];
       updatedImages.splice(index, 1);
       formik.setFieldValue("image", updatedImages);
+      console.log(updatedImages,'ini updated image')
       return updatedImages;
     });
    
