@@ -1,23 +1,41 @@
 // ConversationCard.tsx
-import React from 'react';
+import React from "react";
 
 interface ConversationCardProps {
   data: any;
   setSelectedConversationId: (conversationId: string) => void;
+  setCurrentRecipient: (recipient: any) => void;
 }
 
-const ConversationCard: React.FC<ConversationCardProps> = ({ data, setSelectedConversationId }) => {
-  const recipient = data.conversation.conversationUsers[0]?.userId === data.userId
-    ? data.conversation.conversationUsers[1]?.user
-    : data.conversation.conversationUsers[0]?.user;
+const ConversationCard: React.FC<ConversationCardProps> = ({
+  data,
+  setSelectedConversationId,
+  setCurrentRecipient,
+}) => {
+  const recipient =
+    data.conversation.conversationUsers[0]?.userId === data.userId
+      ? data.conversation.conversationUsers[1]?.user
+      : data.conversation.conversationUsers[0]?.user;
 
+  console.log(data.lastMessage, "yes mann lfg");
   return (
     <div
-      className="bg-black h-20 text-white flex p-4"
-      onClick={() => setSelectedConversationId(data.conversationId)}
+      className="flex h-20 cursor-pointer border-b border-black p-4 text-black hover:bg-slate-300"
+      onClick={() => {
+        setSelectedConversationId(data.conversationId);
+        setCurrentRecipient(recipient);
+      }}
     >
-      <img src={recipient.image} className="rounded-full w-12" alt="Recipient" />
-      {recipient.name}
+      <img
+        src={recipient.image}
+        className="w-12 rounded-full"
+        alt="Recipient"
+      />
+      <div className="ml-2 flex flex-col overflow-hidden">
+        {" "}
+        <p className="font-bold"> {recipient.name}</p>
+        <p className="truncate "> {data.conversation.lastMessage.message}</p>
+      </div>
     </div>
   );
 };

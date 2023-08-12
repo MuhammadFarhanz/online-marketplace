@@ -93,12 +93,11 @@ model Conversation {
 }
 
 model Message {
-    id             String   @id @default(cuid())
-    message        String
-    userId         String
-    conversationId String
-    createdAt      DateTime @default(now())
-
+    id                        String        @id @default(cuid())
+    message                   String
+    userId                    String
+    conversationId            String
+    createdAt                 DateTime      @default(now())
     user                      User          @relation(fields: [userId], references: [id])
     conversation              Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
     lastMessageOfConversation Conversation? @relation("lastMessage")

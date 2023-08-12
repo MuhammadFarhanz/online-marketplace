@@ -4,6 +4,7 @@ import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Navbar from "./components/Navbar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -11,7 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Navbar/>
+      <Navbar />
       <Component {...pageProps} />
     </SessionProvider>
   );

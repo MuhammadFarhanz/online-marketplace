@@ -10,20 +10,17 @@ function ProductCard({ product }: any) {
       href={`/features/product/${product?.id}`}
       //    as={`/product/${product?.id}`}
     >
-      <div className="relative m-10 flex w-full max-w-xs flex-col font-helvetica overflow-hidden border border-gray-100 bg-[#E9E9E9] shadow-md">
-        <a
-          className="relative mx-3 mt-3 flex h-60 overflow-hidden "
-          href="#"
-        >
+      <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-md border border-black bg-[#E9E9E9] font-helvetica shadow-md">
+        <a className="relative mx-3 mt-3 flex h-60 overflow-hidden " href="#">
           <img
-            className="object-cover w-full"
+            className="w-full object-cover"
             src={product?.image[0]?.url}
             alt="product image"
           />
         </a>
         <div className="mt-4 px-5 pb-5">
           <a href="#">
-            <h5 className="text-xl tracking-tight text-slate-900 font-bold truncate">
+            <h5 className="truncate text-xl font-bold tracking-tight text-slate-900">
               {product.name}
             </h5>
           </a>

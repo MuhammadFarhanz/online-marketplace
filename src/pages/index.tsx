@@ -2,12 +2,15 @@
 import Head from "next/head";
 // import Link from "next/link";
 // import { api } from "~/utils/api";
-import  Navbar  from "./components/Navbar";
+import Navbar from "./components/Navbar";
 import { api } from "~/utils/api";
 import ProductCard from "./components/productCard";
+import Select from "react-select";
+import { categoryOptions } from "./utils/categoryOptions";
+import { sortOptions } from "./utils/sortOptions";
 
 export default function Home() {
-  const products = api.product.getAll.useQuery()
+  const products = api.product.getAll.useQuery();
 
   // console.log(products.data)
   return (
@@ -19,10 +22,31 @@ export default function Home() {
       </Head>
 
       {/* <Navbar/> */}
-      <main className="flex min-h-screen flex-col items-center justify-center bg-[#F8F8F8]">
-      <div className="container grid grid-cols-4 gap-12 text-2xl text-white">
+      <main className="flex min-h-screen flex-col items-center bg-[#F8F8F8]">
+        <div className="container  flex h-20 items-center justify-between bg-slate-50 ">
+          <div className="ml-auto w-60">
+            <Select
+              options={sortOptions}
+              placeholder="Sort by"
+              styles={{
+                control: (baseStyles, state) => ({
+                  ...baseStyles,
+                  border: "1px solid black",
+                  boxShadow: "none",
+                  "&:hover": {
+                    border: "1px solid black",
+                  },
+                }),
+              }}
+              isSearchable
+              maxMenuHeight={5 * 40}
+            />
+          </div>
+        </div>
+
+        <div className="bg-slate-40 container grid grid-cols-5 gap-8 text-2xl text-white">
           {products?.data?.map((product) => (
-            <ProductCard key={product.id} product={product}/>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </main>

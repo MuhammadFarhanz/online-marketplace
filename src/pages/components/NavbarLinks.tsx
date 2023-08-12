@@ -16,7 +16,7 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
         <li>
           <Link
             href="/features/chat"
-            className=" ml-2 flex h-10 w-10 cursor-pointer items-center justify-center "
+            className=" ml-2 flex h-10 w-10 cursor-pointer items-center justify-center hover:text-purple-500 "
             aria-current="page"
           >
             <MessageIcon />
@@ -64,7 +64,7 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
                 <li>
                   <Link
                     href={"/features/dashboard/products"}
-                    className="block px-4 py-2 "
+                    className="block px-4 py-2 hover:bg-gray-600 hover:text-white"
                   >
                     Dashboard
                   </Link>
@@ -72,7 +72,7 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
                 <li>
                   <a
                     href="#"
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="block px-4 py-2 hover:bg-gray-600 hover:text-white"
                   >
                     Settings
                   </a>
@@ -80,7 +80,7 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
                 <li>
                   <a
                     href="#"
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="block px-4 py-2 hover:bg-gray-600 hover:text-white"
                   >
                     Earnings
                   </a>
@@ -89,9 +89,23 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
               <div className="py-2">
                 <button
                   onClick={() => signOut()}
-                  className="block px-4 py-2 text-sm "
+                  className=" flex w-full flex-row px-4 py-2 text-sm hover:bg-gray-600 hover:text-white "
                 >
-                  Sign out
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                    />
+                  </svg>
+                  <p className="ml-2"> Sign out</p>
                 </button>
               </div>
             </div>
