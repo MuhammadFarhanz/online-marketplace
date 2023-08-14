@@ -3,12 +3,12 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 // import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
-import EditProductModal from "./editProductModal";
+import EditProductModal from "../../../components/dashboard/editProductModal";
 
-import DashboardSidebar from "./SidebarDashboard";
+import DashboardSidebar from "../../../components/dashboard/SidebarDashboard";
 import AddProduct from "../add-product";
-import DashboardTable from "./dashboardTable";
-import Toast from "./Toast";
+import DashboardTable from "../../../components/dashboard/dashboardTable";
+import Toast from "../../../components/dashboard/Toast";
 import { useDeleteProduct } from "~/hooks/useDeleteProduct";
 
 const Dasboard: NextPage = () => {

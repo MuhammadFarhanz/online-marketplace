@@ -6,15 +6,18 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Select from "react-select";
 
-import { ProductFormValues, productValidationSchema } from "./formUtils";
-import SuccessToast from "./sucessToast";
+import {
+  ProductFormValues,
+  productValidationSchema,
+} from "../../../components/add-product/formUtils";
+import SuccessToast from "../../../components/add-product/sucessToast";
 
-import TextInput from "./textInput";
-import FormField from "./formField";
-import TextAreaInput from "./textAreaInput";
-import ImageUpload from "./ImageUpload";
-import RadioButtonGroup from "./radioButtonGroup";
-import PriceInput from "./priceInput";
+import TextInput from "../../../components/add-product/textInput";
+import FormField from "../../../components/add-product/formField";
+import TextAreaInput from "../../../components/add-product/textAreaInput";
+import ImageUpload from "../../../components/add-product/ImageUpload";
+import RadioButtonGroup from "../../../components/add-product/radioButtonGroup";
+import PriceInput from "../../../components/add-product/priceInput";
 import { useCreateProduct } from "~/hooks/useCreateProduct";
 import { useImageUpload } from "~/hooks/useImageUpload";
 import { usePriceInput } from "~/hooks/useInputPrice";
