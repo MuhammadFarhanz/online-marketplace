@@ -13,17 +13,17 @@ import SettingsIcon from "~/pages/components/SVGComponents/settingsIcon";
 
 const Chat: NextPage = () => {
   const { data: conversations } = api.message.conversations.useQuery();
-  const utils = api.useContext();
+  // const utils = api.useContext();
 
-  api.message.onSendMessage.useSubscription(undefined, {
-    onData: ({ conversationId }) => {
-      utils.message.conversations.invalidate();
-      utils.message.messages.invalidate({ conversationId });
-      // if (!showConversations && currentConversationId !== conversationId) {
-      //   setShowNotificationBadge(true);
-      // }
-    },
-  });
+  // api.message.onSendMessage.useSubscription(undefined, {
+  //   onData: ({ conversationId }) => {
+  //     utils.message.conversations.invalidate();
+  //     utils.message.messages.invalidate({ conversationId });
+  //     // if (!showConversations && currentConversationId !== conversationId) {
+  //     //   setShowNotificationBadge(true);
+  //     // }
+  //   },
+  // });
 
   interface Recipient {
     name: string;

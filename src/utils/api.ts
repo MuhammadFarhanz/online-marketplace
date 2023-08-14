@@ -33,13 +33,13 @@ function getEndingLink(ctx: NextPageContext | undefined) {
       },
     });
   }
-  const client = createWSClient({
-    url:  "ws://localhost:3001",
-  });
+  // const client = createWSClient({
+  //   url:  "ws://localhost:3001",
+  // });
 
-  return wsLink<AppRouter>({
-    client,
-  });
+  // return wsLink<AppRouter>({
+  //   client,
+  // });
 }
 
 /** A set of type-safe react-query hooks for your tRPC API. */
@@ -64,10 +64,10 @@ export const api = createTRPCNext<AppRouter>({
             process.env.NODE_ENV === "development" ||
             (opts.direction === "down" && opts.result instanceof Error),
         }),
-        getEndingLink(ctx),
-        // httpBatchLink({
-        //   url: `${getBaseUrl()}/api/trpc`,
-        // }),
+        // getEndingLink(ctx),
+        httpBatchLink({
+          url: `${getBaseUrl()}/api/trpc`,
+        }),
      
       ],
     };

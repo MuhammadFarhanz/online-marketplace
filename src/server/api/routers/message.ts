@@ -129,10 +129,10 @@ export const messageRouter = createTRPCRouter({
             },
            });
 
-           ctx.ee.emit('sendMessage',{
-            conversationId: conversation.id,
-            userId,
-           });
+          //  ctx.ee.emit('sendMessage',{
+          //   conversationId: conversation.id,
+          //   userId,
+          //  });
 
            return conversation;
         });
@@ -179,25 +179,25 @@ export const messageRouter = createTRPCRouter({
         userId: true,
       },
     });
-      ctx.ee.emit('sendMessage', {conversationId, userId: user!.userId})
+      // ctx.ee.emit('sendMessage', {conversationId, userId: user!.userId})
     }),
 
   // Subscribe to real-time messages being sent
-    onSendMessage: protectedProcedure.subscription(({ ctx }) => {
-      return observable<{conversationId: string}>((emit) => {
-        const onSendMessage = (data: { conversationId: string, userId: string}) => {
-          if(data.userId === ctx.session.user.id){
-            emit.next({conversationId: data.conversationId})
-          }
-        }
-        ctx.ee.on('sendMessage',onSendMessage)
+    // onSendMessage: protectedProcedure.subscription(({ ctx }) => {
+    //   return observable<{conversationId: string}>((emit) => {
+    //     const onSendMessage = (data: { conversationId: string, userId: string}) => {
+    //       if(data.userId === ctx.session.user.id){
+    //         emit.next({conversationId: data.conversationId})
+    //       }
+    //     }
+    //     ctx.ee.on('sendMessage',onSendMessage)
       
-        return () => {
-          ctx.ee.off('sendMessage',onSendMessage)
-        }
+    //     return () => {
+    //       ctx.ee.off('sendMessage',onSendMessage)
+    //     }
         
-      })
+    //   })
       
-    })
+    // })
 
 });
