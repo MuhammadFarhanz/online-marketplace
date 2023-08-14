@@ -1,6 +1,6 @@
   import { api } from "~/utils/api";
 
-  const useFindConversation = (selectedConversationId: any) => {
+  export const useFindConversation = (selectedConversationId: any) => {
     const { data: conversation } = api.message.findConversation.useQuery(
     {
       userId: selectedConversationId,
@@ -13,4 +13,4 @@
     return conversation;
   };
 
-  export default useFindConversation;
+

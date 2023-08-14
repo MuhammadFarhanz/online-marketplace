@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { api } from "~/utils/api";
-import { NEW_MESSAGE } from "../constants";
+import { NEW_MESSAGE } from "../constants/constant";
 
-const useGetMessages = (selectedConversationId: any) => {
+export const useGetMessages = (selectedConversationId: any) => {
   const { data: messages, refetch , isLoading} = api.message.messages.useQuery(
   {
     conversationId: selectedConversationId!
@@ -15,4 +15,4 @@ const useGetMessages = (selectedConversationId: any) => {
   return {messages, isLoading};
 };
 
-export default useGetMessages;
+

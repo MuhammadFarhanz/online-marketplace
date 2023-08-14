@@ -7,7 +7,7 @@ import useGetMessages from "~/pages/hooks/useGetMessage";
 import useFindConversation from "~/pages/hooks/useFindConversation";
 import MessageList from "~/pages/features/chat/messageList";
 import MessageForm from "~/pages/components/messageForm";
-import { NEW_MESSAGE } from "~/pages/constants";
+import { NEW_MESSAGE } from "~/pages/constants/constant";
 import ConversationList from "./ConversationLIst";
 import SettingsIcon from "~/pages/components/SVGComponents/settingsIcon";
 
