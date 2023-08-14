@@ -1,5 +1,6 @@
-import DeleteIcon from "~/pages/components/SVGComponents/deleteIcon";
-import EditIcon from "~/pages/components/SVGComponents/editIcon";
+import DeleteIcon from "~/components/SVGComponents/deleteIcon";
+import EditIcon from "~/components/SVGComponents/editIcon";
+
 
 const ProductTableRow = ({ product, onEdit, onDelete }: any) => {
   return (

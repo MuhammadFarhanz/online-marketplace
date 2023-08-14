@@ -5,20 +5,21 @@ import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Select from "react-select";
-import { cityOptions } from "~/pages/utils/cityOption";
-import { categoryOptions } from "~/pages/utils/categoryOptions";
-import { useCreateProduct } from "~/pages/hooks/useCreateProduct";
+
 import { ProductFormValues, productValidationSchema } from "./formUtils";
 import SuccessToast from "./sucessToast";
-import { useImageUpload } from "~/pages/hooks/useImageUpload";
+
 import TextInput from "./textInput";
 import FormField from "./formField";
 import TextAreaInput from "./textAreaInput";
 import ImageUpload from "./ImageUpload";
 import RadioButtonGroup from "./radioButtonGroup";
 import PriceInput from "./priceInput";
-import { useFormatPrice } from "~/pages/hooks/useFormatPrice";
-import { usePriceInput } from "~/pages/hooks/useInputPrice";
+import { useCreateProduct } from "~/hooks/useCreateProduct";
+import { useImageUpload } from "~/hooks/useImageUpload";
+import { usePriceInput } from "~/hooks/useInputPrice";
+import { cityOptions } from "~/constants/cityOption";
+import { categoryOptions } from "~/constants/categoryOptions";
 
 const AddProduct: NextPage = () => {
   const router = useRouter();
@@ -147,7 +148,7 @@ const AddProduct: NextPage = () => {
 
           <FormField label="Category">
             <Select
-              options={categoryOptions}
+              // options={categoryOptions}
               placeholder="Select a category"
               isSearchable
               maxMenuHeight={5 * 40}

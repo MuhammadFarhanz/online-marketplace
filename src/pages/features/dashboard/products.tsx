@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 // import { useGetProductById } from "~/pages/hooks/useGetProductById";
 import { api } from "~/utils/api";
 import EditProductModal from "./editProductModal";
-import { useDeleteProduct } from "~/pages/hooks/useDeleteProduct";
+
 import DashboardSidebar from "./SidebarDashboard";
 import AddProduct from "../add-product";
 import DashboardTable from "./dashboardTable";
 import Toast from "./Toast";
+import { useDeleteProduct } from "~/hooks/useDeleteProduct";
 
 const Dasboard: NextPage = () => {
   const { data: products, refetch } = api.product.getAllProductById.useQuery();

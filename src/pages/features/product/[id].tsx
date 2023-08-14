@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useGetProductById } from "~/pages/hooks/useGetProductById";
+import { useGetProductById } from "~/hooks/useGetProductById";
 
 const ProductView: NextPage = () => {
   const { data, error } = useGetProductById();

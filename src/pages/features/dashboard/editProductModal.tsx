@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { useImageUpload } from "~/pages/hooks/useImageUpload";
-import { useUpdateProduct } from "~/pages/hooks/useUpdateProduct";
-import { categoryOptions } from "~/pages/utils/categoryOptions";
-import { cityOptions } from "~/pages/utils/cityOption";
 import { api } from "~/utils/api";
 import { productValidationSchema } from "../add-product/formUtils";
+import { useUpdateProduct } from "~/hooks/useUpdateProduct";
+import { useImageUpload } from "~/hooks/useImageUpload";
+import { categoryOptions } from "~/constants/categoryOptions";
+import { cityOptions } from "~/constants/cityOption";
 
 interface Props {
   onClose: () => void;

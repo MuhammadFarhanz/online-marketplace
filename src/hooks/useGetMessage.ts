@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+
+import { NEW_MESSAGE } from "~/constants/newMessage";
 import { api } from "~/utils/api";
-import { NEW_MESSAGE } from "../constants/constant";
+
 
 export const useGetMessages = (selectedConversationId: any) => {
   const { data: messages, refetch , isLoading} = api.message.messages.useQuery(

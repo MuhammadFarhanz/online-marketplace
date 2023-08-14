@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import { api } from "~/utils/api";
-import { NEW_MESSAGE } from "../constants/constant";
+import { NEW_MESSAGE } from "../constants/newMessage";
 interface MessageFormProps {
   recipient: string | string[] | undefined;
   currentConversationId: string | null;

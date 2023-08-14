@@ -2,12 +2,13 @@
 import Head from "next/head";
 // import Link from "next/link";
 // import { api } from "~/utils/api";
-import Navbar from "./components/Navbar";
+
 import { api } from "~/utils/api";
-import ProductCard from "./components/productCard";
+
 import Select from "react-select";
-import { categoryOptions } from "./utils/categoryOptions";
-import { sortOptions } from "./utils/sortOptions";
+import { categoryOptions } from "../constants/categoryOptions";
+import { sortOptions } from "../constants/sortOptions";
+import ProductCard from "~/components/productCard";
 
 export default function Home() {
   const products = api.product.getAll.useQuery();
