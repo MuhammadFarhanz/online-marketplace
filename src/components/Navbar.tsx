@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import AuthShowcase from "../features/sign-in";
 import { useState } from "react";
 import MessageIcon from "./SVGComponents/messageIcon";
 import UserIcon from "./SVGComponents/userIcon";
