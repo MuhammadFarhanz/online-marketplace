@@ -1,7 +1,8 @@
 // hooks/useImageUpload.ts
 import { FormikProps } from "formik";
 import { useState } from "react";
-import { ProductFormValues } from "../features/add-product/formUtils";
+import { ProductFormValues } from "~/pages/features/add-product/formUtils";
+
 
 interface UseImageUploadProps {
     formik: FormikProps<ProductFormValues>; 
