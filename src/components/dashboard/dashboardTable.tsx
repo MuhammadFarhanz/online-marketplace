@@ -2,8 +2,6 @@ import Toast from "./Toast";
 import ProductTableRow from "./productTableRow";
 
 const DashboardTable = ({ products, onEdit, onDelete, isToastOpen }: any) => {
-  console.log(products, "su asu");
-
   if (!products) {
     return <div>Loading...</div>;
   }

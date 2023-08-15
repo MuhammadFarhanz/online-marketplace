@@ -3,17 +3,13 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { memo, useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
-
-
-import ConversationList from "../../../components/chat/ConversationLIst";
-
-import MessageForm from "~/components/messageForm";
 import SettingsIcon from "~/components/SVGComponents/settingsIcon";
-
 import { useGetMessages } from "~/hooks/useGetMessage";
 import { useFindConversation } from "~/hooks/useFindConversation";
-import { NEW_MESSAGE } from "~/constants/newMessage";
 import MessageList from "~/components/chat/messageList";
+import ConversationList from "~/components/chat/ConversationList";
+import MessageForm from "~/components/chat/messageForm";
+import { NEW_MESSAGE } from "~/constants/newMessage";
 
 const Chat: NextPage = () => {
   const { data: conversations } = api.message.conversations.useQuery();

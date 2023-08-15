@@ -15,7 +15,7 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
       {sessionData && (
         <li>
           <Link
-            href="/features/chat"
+            href="/chat"
             className=" ml-2 flex h-10 w-10 cursor-pointer items-center justify-center hover:text-purple-500 "
             aria-current="page"
           >
@@ -63,7 +63,7 @@ const NavbarLinks = ({ sessionData, isOpen, setIsOpen }: any) => {
               >
                 <li>
                   <Link
-                    href={"/features/dashboard/products"}
+                    href={"/dashboard"}
                     className="block px-4 py-2 hover:bg-gray-600 hover:text-white"
                   >
                     Dashboard

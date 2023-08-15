@@ -1,6 +1,6 @@
 // ConversationList.js
 import React from "react";
-import ConversationCard from "~/components/conversationCard";
+import ConversationCard from "./conversationCard";
 
 const ConversationList = ({
   conversations,

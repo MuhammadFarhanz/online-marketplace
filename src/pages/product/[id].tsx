@@ -88,7 +88,7 @@ const ProductView: NextPage = () => {
                 <span className="ml-4">{data.author?.name}</span>
               </div>
               <div className="flex flex-row items-center gap-12">
-                <Link href={`/features/chat/?recipient=${data.authorId}`}>
+                <Link href={`/chat/?recipient=${data.authorId}`}>
                   <button className="h-full bg-black px-16 py-3 font-semibold text-white">
                     Chat
                   </button>

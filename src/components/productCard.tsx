@@ -7,7 +7,7 @@ function ProductCard({ product }: any) {
   return (
     <Link
       prefetch={false}
-      href={`/features/product/${product?.id}`}
+      href={`/product/${product?.id}`}
       //    as={`/product/${product?.id}`}
     >
       <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-md border border-black bg-[#E9E9E9] font-helvetica shadow-md">
