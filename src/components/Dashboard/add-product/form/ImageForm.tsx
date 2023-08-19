@@ -1,12 +1,25 @@
 import React from "react";
+import ImageIcon from "../../../svgcomponent/imageIcon";
 
-const ImageUpload = ({
+interface Props {
+  selectedImage: string[];
+  handleImageChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => void;
+  handleImageDelete: (index: number) => void;
+  formik: any;
+}
+
+const ImageForm: React.FC<Props> = ({
   selectedImage,
   handleImageChange,
   handleImageDelete,
   formik,
-}: any) => {
-  const labels = [1, 2, 3, 4, 5];
+}) => {
+  const labels = [0, 1, 2, 3, 4];
+
+  console.log(selectedImage, "cok ada gk");
 
   return (
     <div className="mb-4">
@@ -14,9 +27,9 @@ const ImageUpload = ({
         Image
       </label>
       <div className="flex flex-wrap">
-        {labels.map((label, index) => (
+        {labels.map((index) => (
           <label
-            key={index}
+            key={`image-label-${index}`}
             htmlFor={`dropzone-file-${index}`}
             className={`relative flex h-32 w-32 items-center justify-center border-2 ${
               selectedImage[index] ? "border-solid" : "border-dashed"
@@ -26,13 +39,13 @@ const ImageUpload = ({
                 : ""
             }`}
           >
-            {/* ... (Image preview or placeholder) */}
             {selectedImage[index] ? (
               <>
                 <label
                   htmlFor={`dropzone-file-${index}`}
                   className="mx-2 my-4 flex h-28 w-28 cursor-pointer items-center justify-center rounded-lg border-2 border-solid "
                 >
+                  {index}
                   <img
                     src={selectedImage[index]}
                     alt="upload"
@@ -48,6 +61,7 @@ const ImageUpload = ({
                   />
 
                   <button
+                    type="button"
                     className="absolute -right-4 -top-4 w-7 rounded-full bg-gray-300 p-1 text-sm text-white"
                     onClick={() => handleImageDelete(index)}
                   >
@@ -56,21 +70,7 @@ const ImageUpload = ({
                 </label>
               </>
             ) : (
-              <svg
-                className="h-8 w-8 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 16"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                />
-              </svg>
+              <ImageIcon />
             )}
             <input
               id={`dropzone-file-${index}`}
@@ -90,4 +90,4 @@ const ImageUpload = ({
   );
 };
 
-export default ImageUpload;
+export default ImageForm;

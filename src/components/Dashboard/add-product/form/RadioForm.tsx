@@ -1,6 +1,12 @@
+import { FieldInputProps } from "formik";
 import React from "react";
 
-const RadioButtonGroup = ({ field, options }: any) => (
+interface Props {
+  field: FieldInputProps<string>;
+  options: Array<object>;
+}
+
+const RadioButtonGroup = ({ field, options }: Props) => (
   <div className="flex items-center">
     {options.map((option: any) => (
       <React.Fragment key={option.value}>

@@ -1,10 +1,15 @@
 import React from "react";
+interface Props {
+  formik: any;
+  handleInputPriceChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  formattedPrice: string;
+}
 
-const PriceInput = ({
+const PriceInput: React.FC<Props> = ({
   formik,
   handleInputPriceChange,
   formattedPrice,
-}: any) => {
+}) => {
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
