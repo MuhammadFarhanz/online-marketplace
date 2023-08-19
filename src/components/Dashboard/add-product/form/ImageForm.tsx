@@ -19,8 +19,6 @@ const ImageForm: React.FC<Props> = ({
 }) => {
   const labels = [0, 1, 2, 3, 4];
 
-  console.log(selectedImage, "cok ada gk");
-
   return (
     <div className="mb-4">
       <label className="mb-2 block text-sm font-bold text-gray-700">
