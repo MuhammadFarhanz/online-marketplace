@@ -43,7 +43,6 @@ const ImageForm: React.FC<Props> = ({
                   htmlFor={`dropzone-file-${index}`}
                   className="mx-2 my-4 flex h-28 w-28 cursor-pointer items-center justify-center rounded-lg border-2 border-solid "
                 >
-                  {index}
                   <img
                     src={selectedImage[index]}
                     alt="upload"
