@@ -20,15 +20,15 @@ const PriceInput: React.FC<Props> = ({
   return (
     <>
       <div className="flex flex-row">
-        <span className="flex items-center rounded rounded-r-none bg-gray-400 px-3 font-bold ">
+        <span className="flex items-center rounded rounded-r-none bg-black px-3 font-bold  text-white">
           Rp
         </span>
         <input
-          className={`focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight
+          className={`focus:shadow-outline w-full appearance-none rounded-sm border-2 px-3 py-2 leading-tight
                   text-gray-700 shadow focus:outline-none ${
                     formik.touched.price && formik.errors.price
                       ? "border border-red-500"
-                      : ""
+                      : "border-gray-400"
                   }`}
           id="price"
           type="text"

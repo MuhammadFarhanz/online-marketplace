@@ -23,11 +23,11 @@ interface Props {
 
 const TextInput = ({ field, form, ...props }: Props) => (
   <input
-    className={`focus:shadow-outline w-full appearance-none rounded border border-gray-300 px-3 py-1
+    className={`focus:shadow-outline w-full appearance-none rounded-sm border-2  px-3 py-1
      text-gray-700 focus:outline-none ${
        form.touched[field.name] && form.errors[field.name]
-         ? "border border-red-500"
-         : ""
+         ? "border-2 border-red-500"
+         : "border-gray-400"
      }`}
     {...field}
     {...props}

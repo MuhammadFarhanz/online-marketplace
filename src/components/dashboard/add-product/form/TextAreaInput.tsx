@@ -9,12 +9,12 @@ interface Props {
 
 const TextAreaInput = ({ field, form, ...props }: Props) => (
   <textarea
-    className={`focus:shadow-outline h-32 w-full appearance-none rounded border px-3
+    className={`focus:shadow-outline h-48 w-full appearance-none rounded-sm border-2 px-3
       py-2 leading-tight text-gray-700 shadow focus:outline-none
       ${
         form.touched[field.name] && form.errors[field.name]
           ? "border border-red-500"
-          : ""
+          : "border-gray-400"
       }`}
     {...field}
     {...props}

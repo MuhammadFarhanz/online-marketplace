@@ -34,7 +34,7 @@ const ImageForm: React.FC<Props> = ({
             } mx-2 my-2 cursor-pointer rounded-lg ${
               formik.touched.image && formik.errors.image
                 ? "border-dashed border-red-500"
-                : ""
+                : "border-gray-400"
             }`}
           >
             {selectedImage[index] ? (
@@ -59,7 +59,7 @@ const ImageForm: React.FC<Props> = ({
 
                   <button
                     type="button"
-                    className="absolute -right-4 -top-4 w-7 rounded-full bg-gray-300 p-1 text-sm text-white"
+                    className="absolute -right-4 -top-4 w-7 rounded-full bg-gray-400 p-1 text-sm text-white"
                     onClick={() => handleImageDelete(index)}
                   >
                     X
