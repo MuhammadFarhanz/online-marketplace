@@ -23,7 +23,10 @@ function ProductCard({ product }: any) {
           <div className="mb-2 flex items-center justify-between sm:mb-5 sm:mt-2">
             <p>
               <span className="text-sm font-bold text-slate-900  sm:text-lg">
-                Rp {product.price}
+                Rp
+                {product?.price
+                  ?.toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
               </span>
             </p>
           </div>
