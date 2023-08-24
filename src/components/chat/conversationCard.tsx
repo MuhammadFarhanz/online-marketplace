@@ -17,10 +17,9 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
       ? data.conversation.conversationUsers[1]?.user
       : data.conversation.conversationUsers[0]?.user;
 
-  console.log(data.lastMessage, "yes mann lfg");
   return (
     <div
-      className="flex h-20 cursor-pointer border-b border-black p-4 text-black hover:bg-slate-300"
+      className="flex h-20 cursor-pointer border-b-2 border-black p-4 text-black hover:bg-purple-300"
       onClick={() => {
         setSelectedConversationId(data.conversationId);
         setCurrentRecipient(recipient);
@@ -28,7 +27,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({
     >
       <img
         src={recipient.image}
-        className="w-12 rounded-full"
+        className="w-12 rounded-full border border-black"
         alt="Recipient"
       />
       <div className="ml-2 flex flex-col overflow-hidden">

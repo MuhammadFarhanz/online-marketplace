@@ -1,28 +1,38 @@
-import Link from "next/link";
+import ListIcon from "../svgcomponent/listIcon";
+import OrdersIcon from "../svgcomponent/ordersIcon";
+import PlusIcon from "../svgcomponent/plusIcon";
 
-const DashboardSidebar = ({ setIsTableOpen }: any) => {
+const DashboardSidebar = ({ setIsTableOpen, isTableOpen }: any) => {
   return (
-    <aside className="m-2 h-screen w-1/5 text-black">
-      <div className="h-1/2 rounded-md border border-black">
-        <h1 className="border-b border-black p-4 text-2xl font-semibold">
-          Product Dashboard
+    <aside className="font m-2 h-screen w-1/5 bg-black text-black">
+      <div className="h-full -translate-x-1 -translate-y-1 border-2 border-black bg-white">
+        <h1 className="border-b-2 border-black bg-[#D2D2D2] p-4 text-2xl font-semibold">
+          Dashboard
         </h1>
         <ul className="mt-6 space-y-3">
           <li
             onClick={() => setIsTableOpen(true)}
-            className=" cursor-pointer p-4 py-1 pb-3 hover:text-purple-500"
+            className={`${
+              isTableOpen ? "text-purple-500" : null
+            } flex cursor-pointer flex-row p-4 py-1 pb-3 font-bold hover:text-purple-500`}
           >
-            Products
+            <ListIcon />
+            <p>Products List</p>
           </li>
+
           <li
             onClick={() => {
-              setIsTableOpen(false); // Close the DashboardTable section
+              setIsTableOpen(false);
             }}
-            className=" cursor-pointer p-4 py-1 pb-3 hover:text-purple-500"
+            className={`${
+              !isTableOpen ? "text-purple-500" : null
+            } flex cursor-pointer flex-row p-4 py-1 pb-3 font-bold hover:text-purple-500`}
           >
-            Add product
+            <PlusIcon />
+            Add Product
           </li>
-          <li className=" cursor-pointer p-4 py-1 pb-3 hover:text-purple-500">
+          <li className=" flex cursor-pointer flex-row p-4 py-1 pb-3 font-bold hover:text-purple-500">
+            <OrdersIcon />
             Orders
           </li>
         </ul>

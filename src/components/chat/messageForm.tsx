@@ -1,6 +1,7 @@
 import { useFormik } from "formik";
 import { NEW_MESSAGE } from "~/constants/newMessage";
 import { api } from "~/utils/api";
+import PlaneIcon from "../svgcomponent/planeIcon";
 interface MessageFormProps {
   recipient: string | string[] | undefined;
   currentConversationId: string | null;
@@ -79,30 +80,24 @@ const MessageForm: React.FC<MessageFormProps> = ({
   return (
     <form
       onSubmit={formik.handleSubmit}
-      className=" absolute bottom-0 flex h-[10%] w-full items-center border-t border-black   px-8 pb-6 pt-6 shadow-md"
+      className="absolute bottom-0 m-4 flex h-[8%] w-[95%]  items-center bg-black shadow-md"
     >
-      <div className="flex  w-full  ">
-        <input
-          className="w-[95%] appearance-none rounded-md border border-black bg-[#E9E9E9] px-3 py-2 leading-tight placeholder:text-black focus:outline-none"
-          id="message"
-          name="message"
-          placeholder="Enter message"
-          value={formik.values.message}
-          onChange={formik.handleChange}
-        />
-
+      <div className="flex h-full w-full -translate-x-[3px] -translate-y-[3px] items-center border-2 border-black bg-[#E9E9E9]">
+        <div className="flex h-full w-full ">
+          <input
+            className=" w-full flex-shrink-0 appearance-none border-black bg-transparent px-3 py-2 leading-tight placeholder:text-black focus:outline-none"
+            id="message"
+            name="message"
+            placeholder="Enter message"
+            value={formik.values.message}
+            onChange={formik.handleChange}
+          />
+        </div>
         <button
           type="submit"
-          className="focus:shadow-outline ml-2 flex w-[5%] items-center justify-center rounded-md border border-black px-2 py-2 font-bold"
+          className=" ml-2 mr-2 flex h-10 w-10 flex-shrink-0 items-center justify-center border-2 border-black bg-[#b38af0] font-bold"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="h-6 w-6"
-          >
-            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-          </svg>
+          <PlaneIcon />
         </button>
       </div>
     </form>
