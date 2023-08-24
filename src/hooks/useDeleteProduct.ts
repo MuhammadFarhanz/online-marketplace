@@ -4,11 +4,9 @@ export const useDeleteProduct = () => {
   const createProductMutation = api.product.delete.useMutation();
 
   const deleteProduct = async (id:any) => {
-
     try {
-      const data = await createProductMutation.mutateAsync({ id });
-      // Handle success if needed
-
+       await createProductMutation.mutateAsync({ id });
+    
     } catch (error) {
       // Handle error if needed
       console.error('Failed to delete product:', error);

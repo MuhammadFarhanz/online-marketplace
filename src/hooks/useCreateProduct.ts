@@ -5,11 +5,10 @@ export const useCreateProduct = () => {
 
   const createProduct = async (productData:any) => {
     try {
-      const data = await createProductMutation.mutateAsync(productData);
-      // Handle success if needed
-      console.log('Product created:', data);
+     await createProductMutation.mutateAsync(productData);
+
     } catch (error) {
-      // Handle error if needed
+      
       console.error('Failed to create product:', error);
     }
   };
