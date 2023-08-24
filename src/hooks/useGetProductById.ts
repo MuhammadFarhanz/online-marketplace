@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 export const useGetProductById = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, } = router.query;
   const { index } = router.query;
 
   const { data, error } = api.product.getProductById.useQuery(
@@ -12,6 +12,7 @@ export const useGetProductById = () => {
     },
     {
       enabled: !!index?.[0] || !!id,
+      
     },
   );
 

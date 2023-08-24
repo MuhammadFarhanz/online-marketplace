@@ -1,7 +1,7 @@
 // hooks/useImageUpload.ts
 import { FormikProps } from "formik";
 import { useState } from "react";
-import { ProductFormValues } from "~/components/add-product/formUtils";
+import { ProductFormValues } from "~/components/dashboard/add-product/form/utils";
 
 
 interface UseImageUploadProps {
@@ -42,7 +42,6 @@ export const useImageUpload = ({ formik }: UseImageUploadProps) => {
       const updatedImages = [...previousImages];
       updatedImages.splice(index, 1);
       formik.setFieldValue("image", updatedImages);
-      console.log(updatedImages,'ini updated image')
       return updatedImages;
     });
    
