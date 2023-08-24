@@ -1,19 +1,54 @@
-// import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-// import Link from "next/link";
-// import { api } from "~/utils/api";
-
 import { api } from "~/utils/api";
-
 import Select from "react-select";
-import { categoryOptions } from "../constants/categoryOptions";
 import { sortOptions } from "../constants/sortOptions";
-import ProductCard from "~/components/productCard";
+import ProductCard from "~/components/product/productCard";
+import Link from "next/link";
+
+const SortBySelect = () => (
+  <div className="absolute ml-auto w-60 bg-black">
+    <Select
+      options={sortOptions}
+      placeholder="Sort by"
+      styles={{
+        control: (baseStyles, state) => ({
+          ...baseStyles,
+          border: "1px solid black",
+          boxShadow: "none",
+          "&:hover": {
+            border: "1px solid black",
+          },
+          transform: "translateX(-2px) translateY(-2px)",
+          borderRadius: 0,
+          backgroundColor: "#E9E9E9",
+        }),
+      }}
+      isSearchable
+      maxMenuHeight={5 * 40}
+    />
+  </div>
+);
+
+const ProductList = ({ products }: any) => (
+  <div className="container grid grid-cols-2 gap-4 p-4 pt-4 text-2xl text-white sm:grid-cols-2 sm:gap-6 sm:p-0 sm:pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    {products?.data?.map((product: any) => (
+      <Link
+        prefetch={false}
+        key={product.id}
+        href={{
+          pathname: `/product/${product.name}`,
+          query: { slug: `${product.name}`, id: product.id },
+        }}
+      >
+        <ProductCard product={product} />
+      </Link>
+    ))}
+  </div>
+);
 
 export default function Home() {
   const products = api.product.getAll.useQuery();
 
-  // console.log(products.data)
   return (
     <>
       <Head>
@@ -22,34 +57,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* <Navbar/> */}
-      <main className="flex min-h-screen flex-col items-center bg-[#F8F8F8]">
-        <div className="container  flex h-20 items-center justify-between bg-slate-50 ">
-          <div className="ml-auto w-60">
-            <Select
-              options={sortOptions}
-              placeholder="Sort by"
-              styles={{
-                control: (baseStyles, state) => ({
-                  ...baseStyles,
-                  border: "1px solid black",
-                  boxShadow: "none",
-                  "&:hover": {
-                    border: "1px solid black",
-                  },
-                }),
-              }}
-              isSearchable
-              maxMenuHeight={5 * 40}
-            />
-          </div>
+      <main className="flex min-h-screen flex-col items-center bg-[#E9E9E9]">
+        <div className="container hidden h-16 items-end justify-between sm:flex">
+          <SortBySelect />
         </div>
-
-        <div className="bg-slate-40 container grid grid-cols-5 gap-8 text-2xl text-white">
-          {products?.data?.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <ProductList products={products} />
       </main>
     </>
   );

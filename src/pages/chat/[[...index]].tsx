@@ -3,13 +3,14 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { memo, useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
-import SettingsIcon from "~/components/SVGComponents/settingsIcon";
+import SettingsIcon from "~/components/svgcomponent/settingsIcon";
 import { useGetMessages } from "~/hooks/useGetMessage";
 import { useFindConversation } from "~/hooks/useFindConversation";
 import MessageList from "~/components/chat/messageList";
 import ConversationList from "~/components/chat/ConversationList";
 import MessageForm from "~/components/chat/messageForm";
 import { NEW_MESSAGE } from "~/constants/newMessage";
+import SearchIcon from "~/components/svgcomponent/searchIcon";
 
 const Chat: NextPage = () => {
   const { data: conversations } = api.message.conversations.useQuery();
@@ -32,7 +33,7 @@ const Chat: NextPage = () => {
 
   const router = useRouter();
 
-  const [currentConversationId, setSelectedConversationId] = useState<
+  const [currentConversationId, setCurrentConversationId] = useState<
     string | null
   >(null);
   const { messages, isLoading } = useGetMessages(currentConversationId);
@@ -49,13 +50,13 @@ const Chat: NextPage = () => {
 
   useEffect(() => {
     if (findconversation) {
-      setSelectedConversationId(findconversation);
+      setCurrentConversationId(findconversation);
     } else {
       setCurrentRecipient({
         name: userData?.name as string,
         image: userData?.image as string,
       });
-      setSelectedConversationId(NEW_MESSAGE);
+      setCurrentConversationId(NEW_MESSAGE);
     }
   }, [findconversation]);
 
@@ -68,101 +69,91 @@ const Chat: NextPage = () => {
       </Head>
       <div className="bg-[#F8F8F8] ">
         <main className="container mx-auto flex  h-full flex-col font-helvetica">
-          <h1 className="mb-4 ml-0 mt-4  text-4xl text-black">CHAT</h1>
+          <h1 className="text-blac mb-4 ml-0  mt-4 text-4xl font-bold">CHAT</h1>
           <div className="flex h-[80vh] w-full justify-between ">
-            <div className="mr-4 flex w-[25%] flex-col">
+            <div className="mr-4 flex w-[25%] flex-col ">
               <div className="relative flex w-full items-center justify-between ">
-                <div className="relative flex w-5/6 items-center">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="h-12 w-full rounded-lg border border-black py-4 pl-2 pr-10 placeholder:text-black focus:outline-none"
-                  />
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="pointer-events-none absolute right-2 top-1/2 h-4 -translate-y-1/2 transform text-gray-400"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                      clipRule="evenodd"
+                <div className="relative flex w-5/6 items-center bg-black">
+                  <div className="w-full -translate-x-[2px] -translate-y-[2px] bg-white">
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      className="h-12 w-full border-2 border-black py-4 pl-2 pr-10 placeholder:text-black focus:outline-none"
                     />
-                  </svg>
+                    <SearchIcon />
+                  </div>
                 </div>
-                <SettingsIcon />
+                <div className="ml-2 flex h-full w-1/6 bg-black">
+                  <div className="flex h-full w-full -translate-x-[2px] -translate-y-[2px] items-center justify-center border-2 border-black bg-white">
+                    <SettingsIcon />
+                  </div>
+                </div>
               </div>
 
               <ConversationList
                 conversations={conversations}
-                setSelectedConversationId={setSelectedConversationId}
+                setSelectedConversationId={setCurrentConversationId}
                 setCurrentRecipient={setCurrentRecipient}
               />
             </div>
+            <div className="h-full w-[75%] bg-black">
+              <div className="relative h-full -translate-x-1 -translate-y-1 border-2 border-black  bg-white">
+                {currentRecipient?.name === undefined ? (
+                  <div className="flex h-full items-center justify-center font-bold">
+                    select user to start a chat
+                  </div>
+                ) : null}
 
-            <div className="relative  ml-2 h-full w-[75%] rounded-md border border-black ">
-              {!currentRecipient && <div> select user to start a chat</div>}
+                {currentRecipient?.name !== undefined ? (
+                  <div className="h-[10%] border-b-2 border-black pl-4 pr-4">
+                    <div className="flex justify-between  p-4 text-black">
+                      <div className="flex flex-row">
+                        <img
+                          src={currentRecipient?.image}
+                          className="h-12 w-12 rounded-full border border-black"
+                        />
+                        <div className="relative flex flex-col">
+                          <p className="ml-2">{currentRecipient?.name || ""}</p>
+                          <div className=" ml-4">
+                            <p className="ml-2 text-sm">active</p>
 
-              {currentRecipient?.name !== undefined ? (
-                <div className="h-[10%] border-b border-black pl-4 pr-4">
-                  <div className="flex justify-between  p-4 text-black">
-                    <div className="flex flex-row">
-                      <img
-                        src={currentRecipient?.image}
-                        className="h-12 w-12 rounded-full"
-                      />
-                      <div className="relative flex flex-col">
-                        <p className="ml-2">{currentRecipient?.name || ""}</p>
-                        <div className=" ml-4">
-                          <p className="ml-2 text-sm">active</p>
-                          <div className="absolute left-[8px] top-8 h-2 w-2 rounded-full bg-green-500"></div>
+                            <div className="absolute left-[8px] top-8 h-2 w-2 rounded-full bg-green-500"></div>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="relative flex items-center">
-                      <input
-                        type="text"
-                        placeholder="Search"
-                        className="rounded-lg border border-black px-4 py-2 pr-20 placeholder:text-black "
-                      />
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="absolute right-2 top-1/2 h-4 w-5 -translate-y-1/2 transform text-gray-400"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                          clipRule="evenodd"
+                      <div className="relative flex items-center bg-black">
+                        <input
+                          type="text"
+                          placeholder="Search"
+                          className=" -translate-x-[2px] -translate-y-[2px] border-2 border-black px-4 py-2 pr-20 placeholder:text-black focus:outline-none"
                         />
-                      </svg>
+                        <SearchIcon />
+                      </div>
                     </div>
                   </div>
+                ) : null}
+
+                <div className="  mb-30 h-[80%] overflow-y-auto ">
+                  {messages && (
+                    <MessageList
+                      messages={messages}
+                      conversationId={currentConversationId}
+                      isLoading={isLoading}
+                    />
+                  )}
                 </div>
-              ) : null}
 
-              <div className="  mb-30 h-[80%] overflow-y-auto ">
-                {messages && (
-                  <MessageList
-                    messages={messages}
-                    conversationId={currentConversationId}
-                    isLoading={isLoading}
-                  />
-                )}
+                {messages || recipient ? (
+                  <div className="flex justify-center ">
+                    <MessageForm
+                      currentConversationId={currentConversationId}
+                      recipient={recipient}
+                      setSelectedConversationId={setCurrentConversationId}
+                    />
+                  </div>
+                ) : null}
               </div>
-
-              {messages || recipient ? (
-                <>
-                  <MessageForm
-                    currentConversationId={currentConversationId}
-                    recipient={recipient}
-                    setSelectedConversationId={setSelectedConversationId}
-                  />
-                </>
-              ) : null}
             </div>
           </div>
         </main>
@@ -171,4 +162,4 @@ const Chat: NextPage = () => {
   );
 };
 
-export default memo(Chat);
+export default Chat;
