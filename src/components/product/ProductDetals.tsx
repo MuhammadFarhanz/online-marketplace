@@ -10,7 +10,7 @@ const ProductDetails = ({
   authorId,
 }: any) => {
   return (
-    <div className="flex flex-col gap-4 p-2 lg:w-2/4">
+    <div className="flex flex-col gap-4 p-4 lg:w-2/4">
       <div className="flex-grow">
         <h1 className="mb-2 border-b border-black pb-2 text-2xl font-bold sm:text-3xl">
           {name}
@@ -23,14 +23,16 @@ const ProductDetails = ({
           <p className="font-semibold"> Condition:</p>
           <p className="ml-2">{condition}</p>
         </div>
-        <p className="mb-2 flex flex-row text-gray-700">
+        <p className="mb-2 flex flex-row text-gray-700 ">
           <p className="font-semibold"> Location:</p>
           <p className="ml-2">{location}</p>
         </p>
-        <p className="mb-2">
+        <div className="mb-2 whitespace-normal">
           <span className="mb-2 font-semibold">Detail:</span>
-          <p className="items-strech flex text-gray-700 ">{description}</p>
-        </p>
+          <p className="whitespace-normal break-words text-gray-700">
+            {description}
+          </p>
+        </div>
       </div>
       <div className="flex items-center border-0 border-t border-gray-300 pb-3 pt-3">
         <img
