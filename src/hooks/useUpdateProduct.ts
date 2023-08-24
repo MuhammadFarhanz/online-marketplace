@@ -7,8 +7,7 @@ export const useUpdateProduct = () => {
 
     try {
       const data = await createProductMutation.mutateAsync({id, newProductData});
-
-      console.log('Product updated:', data);
+      
     } catch (error) {
 
       console.error('Failed to updata product:', error);
