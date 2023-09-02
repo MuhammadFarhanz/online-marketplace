@@ -184,7 +184,7 @@ const AddProduct: React.FC = () => {
             />
           </FormField>
 
-          <div className="flex items-center justify-end pt-4">
+          <div className="flex items-center justify-end pt-8 ">
             <div className="bg-black">
               <button
                 className="focus:shadow-outline -translate-x-1 -translate-y-1 border-2 border-black bg-white px-4 py-2 font-bold text-black hover:bg-purple-300 focus:outline-none"
